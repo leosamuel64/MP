@@ -52,9 +52,71 @@ let rec evalue p x=
   match p with
   | [] -> 0
   | a::q -> a+x*(evalue q x)
-;; 
+;;
 
 (* Le cout est linéaire : Θ(n) *)
+
+
+(* -- Exercice 2 -- *)
+
+let rec lineaire n=
+  if n=0 then 0
+  else lineaire (n-1)
+  ;;
+
+
+let quadratique n=
+  let res = ref 0 in
+  for i=0 to (n-1) do
+    for j=0 to (n-1) do 
+      res := !res + i - j
+    done;
+  done;
+  !res
+      ;;
+
+
+let rec quasi n =
+  match n with
+  | 0 -> 1
+  | 1 -> 0
+  | _ when n mod 2 = 0 -> carre (quasi (n/2))
+  | _ -> carre (quasi (n/2))*0
+;;
+
+
+let rec loga n =
+  match n with
+  | 1 -> 0
+  | _ -> loga (n/2)
+;;
+
+
+(* -- Exercice 5 *)
+
+
+
+(* -- 2 *)
+
+let bouge i j =
+  (*Affiche le deplacement d'un anneau*)
+  print_int i;print_string"->";print_int j;print_char '\n';
+;;
+
+let rec hanoi n d a i=
+  if n = 0 then
+      ()
+  else begin
+      hanoi (n-1) d i a;
+      bouge d a;
+      hanoi (n-1) i a d; 
+  end
+;;
+
+hanoi 3 0 2 1;;
+
+(* On compte le nombre d'appel à bouge : on a C(n+1)=2*C(n)+1 donc C(n)=2**n-1) d'ou une complexité en O(2**n) *)
+
 
 
 
