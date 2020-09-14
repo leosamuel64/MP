@@ -163,8 +163,16 @@ let maxTab t =
   in aux 0 (Array.length t)
 ;;
 
-(* Comptons le nombre d'appel à aux. On a C(n)= C(n/2) + C(n/2)  *)
-(* On a α+β=2, α = 1, β=1 donc α=β On a alors C(n)=O(nlog(n))  *)
+(* Comptons le nombre d'appel à aux. On a C(n)= C(n/2) + C(n+1/2) + O(1)  *)
+(* On a α+β=2, α = log2(2)=1, β=0 donc α>β On a alors C(n)=O(n) *)
+
+(* -- 3 *)
+
+(* Soit t un tableau et n sa longueur.Pour calculer son max il faut avoir vu au moins 1 fois chaque éléments *)
+(* Comme une comparaison fait intervernir 2 elements, il faut au moins n/2 comparaison soit un O(n) *)
+(* Complexité au moins linéaire *)
+
+
 
 (* maxTab tTest;;
 
@@ -275,10 +283,46 @@ dedoublonne (numerote [1;2;3;4;5;6;4;3;5;6]);;
 
 (* -- 1 *)
 (* On a une complexité en on note k le nombre de multiplication 
-alors on a une complexité en O(2k) *)
+alors on a une complexité en O(n*k) *)
+
 
 (* -- 2 *)
-(* Dans les deux cas, en note k le nomre de multiplication on a O(2k) multiplication *)
-(* On a le meme ordre de grandeur entre les deux formules en terme de multiplication*)
+
+(* On calcul αγ, βδ et (α-β)(γ-δ). Donc il nous faut 3 appels récursifs *)
+(* ∀ n ∈ ℕ, Cn ≤ 3*C((n+1)/2)+O(1) *)
+(* α = log2(3) et β=0 < α *)
+(* O(n^α)=O(n^{log2(2)}) et log2(3)< 2 donc c'est mieux que la premiere méthode *)
+
+(* Programmons cette méthode : *)
 
 
+
+let karatsuba nombre1 nombre2=
+  let rec aux x y n=
+    (* argument suplémentaire : n tq x et y s'ecrivent en <= n bits *)
+    let k = n/2 in
+    let bpk = (1 lsl k) in
+    let beta = x mod bpk  (* (1 lsl n) correspond a b**k(On décale le 1) *)
+    and alpha = x/ bpk
+    and delta = y mod bpk  (* (1 lsl n) correspond a b**k(On décale le 1) *)
+    and gamma = y/ bpk in
+
+    let ag = aux alpha gamma ((n+1)/2)
+    and bd = aux beta delta ((n+1)/2) 
+    and autre = aux (alpha-beta) (gamma-delta) ((n+1)/2) in
+
+    (* Cas d'arret : *)
+    if n=1 then
+      x*y
+    else
+    
+     ag * (bpk*bpk) + 
+    (
+      ag +
+      bd -
+      autre )*bpk + 
+      bd
+  in aux nombre1 nombre2 64
+;;
+
+karatsuba 2 3;;
