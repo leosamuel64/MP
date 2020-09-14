@@ -271,5 +271,14 @@ dedoublonne (numerote [1;2;3;4;5;6;4;3;5;6]);;
 
 (* Pour le 14/09 FINIR Ex7 et Faire le début de Ex 8 (1,2,3) *)
 
+(* -- Exercice 8 *)
+
+(* -- 1 *)
+(* On a une complexité en on note k le nombre de multiplication 
+alors on a une complexité en O(2k) *)
+
+(* -- 2 *)
+(* Dans les deux cas, en note k le nomre de multiplication on a O(2k) multiplication *)
+(* On a le meme ordre de grandeur entre les deux formules en terme de multiplication*)
 
 
