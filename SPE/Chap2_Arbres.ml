@@ -53,11 +53,6 @@ profondeur exemple;;
 let estComplet a =
   let hInit = profondeur a in
   let rec aux a2 h hInit =
-    (*  
-        a est un arbre
-        h est la hauteur du noeud 
-        hInit est la hauteur de a
-    *)
     match a2 with
     | Vide when h = hInit || h-1=hInit -> true
     | Vide -> false
@@ -151,3 +146,85 @@ estParfait exemple;;
 estCompletGauche exemple;;
 estEquilibre exemple;;
 
+type categorieArbre = Parfait | CompletGauche | Complet | Equilibre | Quelconque;;
+
+
+let categorieNaif a=
+  if estParfait a then
+    Parfait
+  else if estCompletGauche a then
+    CompletGauche
+  else if estComplet a then
+    Complet
+  else if estEquilibre a then
+    Equilibre
+  else
+    Quelconque
+;;
+
+categorieNaif exemple;;
+categorieNaif arbre1;;
+categorieNaif arbre2;;
+
+let compare a b=
+  if a=Parfait && b=Parfait then Parfait
+  else if a=Quelconque || b = Quelconque then Quelconque
+  else Quelconque
+;;
+
+(* 1.2) Revision sur les ABR *)
+
+(* Une fonction un peu plus compliquée que celles vue en MPSI *)
+
+(* enlever un element d'un ABR : *)
+
+(* L'étape cruciale est celle consistante à rassembler les deux fils d'un ABR en un unique ABR *)
+
+let rec fusion_ABR_disjoints ag ad=
+  (* ag et ad deux abr tq les étiquette de ag sont toutes < aux étiquettes de ad *)
+  match ag,ad with
+  | Vide , _ -> ad
+  | _ , Vide -> ag
+  | Noeud(fgg,eg,fgd),Noeud(fdg,ed,fdd) -> Noeud(fgg ,eg ,Noeud(
+                                                                fusion_ABR_disjoints fdg fgd,
+                                                                ed,
+                                                                fdd))
+;;
+(* 
+          eg
+      /        \
+  (fgg)          ed
+                /  \
+  (Fusion fdg fgd)  (fdd)
+ *)
+
+let rec sans x a=
+  match a with
+  | Vide -> Vide
+  | Noeud(fg,e,fd) when x=e -> fusion_ABR_disjoints fg fd
+  | Noeud(fg,e,fd) when x < e -> Noeud(sans x fg,e,fd)
+  | Noeud(fg,e,fd) -> Noeud(fg,e,sans x fd)
+;;
+  
+(* -- Exercice 5 : Union et intersection *)
+
+(* - 1 *)
+
+let rec segmente a x=
+  (* abr des elem <x, abr des elem >x, x ∈ a *)
+  match a with
+  | Vide -> (Vide,Vide,false)
+  | Noeud(Vide,e,Vide) when e=x -> (Vide,Vide,true)
+  | Noeud(Vide,_,Vide)  -> (Vide,Vide,false)
+
+  | Noeud(fg,e,fd) when e=x -> (fg,fd,true)
+  | Noeud(fg,e,fd) when e<x -> let fgg,fgd,x_dans_fg = segmente fg x in
+                                  (
+                                    fgg,
+                                    Noeud(fgd,e,fd),
+                                    x_dans_fg
+                                  )
+
+  | Noeud(fg,e,fd) -> (true)
+
+  (* Finir l'exo 5 pour le 21/09/2020 *)
