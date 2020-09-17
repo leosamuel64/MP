@@ -74,11 +74,11 @@ estComplet exemple;;
 
 let estCompletGauche a =
   let f = Queue.create () in
-  Queue.add a  f;
+  Queue.add a f;
 
   let neContientQueVide f=
     let res = ref true in
-    while not(Queue.is_empty f) && !res <> false do
+    while not(Queue.is_empty f) && !res do
       if Queue.take f <> Vide then res:=false
     done;
     !res
@@ -91,8 +91,8 @@ let estCompletGauche a =
       let t = Queue.take f in
       match t with
         | Vide  -> neContientQueVide f
-        | Noeud(fg,_,fd) -> ( Queue.add fd f ;
-                              Queue.add fg f ; 
+        | Noeud(fg,_,fd) -> ( Queue.add fg f ;
+                              Queue.add fd f ; 
                               aux f )
   in aux f                 
 ;;
