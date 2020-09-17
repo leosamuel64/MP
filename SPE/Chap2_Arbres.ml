@@ -75,6 +75,14 @@ estComplet exemple;;
 let estCompletGauche a =
   let f = Queue.create () in
   Queue.add a  f;
+
+  let neContientQueVide f=
+    let res = ref true in
+    while not(Queue.is_empty f) && !res <> false do
+      if Queue.take f <> Vide then res:=false
+    done;
+    !res
+    in
   
   let rec aux f =
     if Queue.is_empty f then 
@@ -82,7 +90,7 @@ let estCompletGauche a =
     else
       let t = Queue.take f in
       match t with
-        | Vide  -> Queue.is_empty f
+        | Vide  -> neContientQueVide f
         | Noeud(fg,_,fd) -> ( Queue.add fd f ;
                               Queue.add fg f ; 
                               aux f )
@@ -110,7 +118,7 @@ let rec estEquilibre a=
 
 
 let feuille x = Noeud(Vide, x, Vide);;
-let exemple=
+let exemple1=
   Noeud (
      Noeud  (
          feuille 2,
@@ -125,6 +133,19 @@ let exemple=
          )
      );;
 
+let exemple = Noeud (Noeud(Vide, 2, feuille 1),5,Noeud(Vide,3,Noeud(Noeud(Vide, 0, Vide),2,Vide)));;
+let arbre1 = Noeud(Noeud(Noeud(Vide,5,Vide), 6, Vide), 7, Vide) ;;
+let arbre2 = Noeud(
+					Noeud(Vide,
+							5,
+							Vide)
+					, 12,
+					
+					Noeud(Vide,
+							7,
+							Vide))
+      ;;
+      
 estComplet exemple;;
 estParfait exemple;;
 estCompletGauche exemple;;
