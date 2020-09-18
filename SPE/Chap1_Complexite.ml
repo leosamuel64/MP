@@ -271,11 +271,34 @@ let rec dedoublonne l =
   match l with
   | [] -> []
   | [e] -> [e]
-  | (_,a)::(n,b)::q when a=b -> dedoublonne((n,b)::q)
+  | (a,_)::(b,n)::q when a=b -> dedoublonne((b,n)::q)
   | t::q -> t::dedoublonne q
 ;;
 
-dedoublonne (numerote [1;2;3;4;5;6;4;3;5;6]);;
+dedoublonne (tri (numerote [1;2;3;4;5;6;4;3;5;6]) (<));;
+
+let remetDansLOrdre l=
+  let rec inverseCouple l=
+    match l with
+    | [] -> []
+    | (a,b)::q -> (b,a)::(inverseCouple q)    in      
+  
+    let rec separe l=
+      match l with
+      | [] -> []
+      | (_,a)::q -> a::separe q               in
+
+    separe (tri (inverseCouple l) (<))
+;;
+
+(* Soit n la longueur de la liste : Cn = O(n)+O(n)+O(nlog(n)) = O(nlog(n)) *)
+
+dedoublonne (tri (numerote [1;4;2;5;3;7;9;6;12;6]) (<));;
+
+remetDansLOrdre( dedoublonne (tri (numerote [1;4;2;5;3;7;9;6;12;6]) (<)));;
+
+(* Cn = O(nlogn) + O(n) + O(nlogn) + O(n) = O(nlogn) *)
+
 
 (* Pour le 14/09 FINIR Ex7 et Faire le début de Ex 8 (1,2,3) *)
 
