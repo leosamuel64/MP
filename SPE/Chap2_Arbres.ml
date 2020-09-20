@@ -198,12 +198,12 @@ let rec fusion_ABR_disjoints ag ad=
   (Fusion fdg fgd)  (fdd)
  *)
 
-let rec sans x a=
+let rec sans a x=
   match a with
   | Vide -> Vide
   | Noeud(fg,e,fd) when x=e -> fusion_ABR_disjoints fg fd
-  | Noeud(fg,e,fd) when x < e -> Noeud(sans x fg,e,fd)
-  | Noeud(fg,e,fd) -> Noeud(fg,e,sans x fd)
+  | Noeud(fg,e,fd) when x < e -> Noeud(sans fg x,e,fd)
+  | Noeud(fg,e,fd) -> Noeud(fg,e,sans fd x)
 ;;
   
 (* -- Exercice 5 : Union et intersection *)
@@ -224,7 +224,70 @@ let rec segmente a x=
                                     Noeud(fgd,e,fd),
                                     x_dans_fg
                                   )
-
-  | Noeud(fg,e,fd) -> (true)
+  | Noeud(fg,e,fd) -> let fgg,fgd,x_dans_fd = segmente fd x in
+                                  (
+                                    fgd,
+                                    Noeud(fg,e,fgg),
+                                    x_dans_fd
+                                  )
+;;  
 
   (* Finir l'exo 5 pour le 21/09/2020 *)
+
+
+
+
+  let rec reunion a1 a2 =
+    match a1,a2 with
+        | Vide,_    -> a2
+        | _,Vide    -> a1
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 < e2 ->
+                Noeud( fg1,e1,  Noeud(reunion (sans fd1 e2) (sans fg2 e1), e2, fd2))
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 > e2 ->
+                Noeud( fg2,e2,  Noeud(reunion (sans fd2 e1) (sans fg1 e2), e1, fd1))
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) ->
+                Noeud(fg1,e1, reunion (reunion fd1 fg2) fd2)
+;;
+
+
+let rec intersection a1 a2=
+    match a1,a2 with
+        | Vide,_    -> Vide
+        | _,Vide    -> Vide
+        
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 < e2 ->
+            reunion   (intersection a1 fg2) (intersection fd1 a2)
+                    
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 > e2 ->
+            reunion   (intersection a2 fg1) (intersection fd2 a1)
+        
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) ->
+            Noeud( intersection fg1 fg2, e1 , intersection fd1 fd2)
+;;
+
+let rec difference a b=
+    (* renvoie un ABR contenant les Ã©tiquettes de a qui ne sont pas dans b*)
+    match a,b with
+        | Vide,_    -> Vide
+        |_,Vide     -> a
+        
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 = e2 ->
+              fusion_ABR_disjoints (difference fg1 fg2) (difference fd1 fd2)
+        
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 < e2 ->
+                let fd1bis = difference (sans fd1 e2) fd2 
+                 in
+                    difference (Noeud(fg1,e1,fd1bis)) fg2 
+        
+        | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2)  ->
+                let fg1bis = (difference (sans fg1 e2)) fg2
+                 in
+                    difference (Noeud(fg1bis,e1,fd1)) fd2
+;;
+
+       
+
+reunion exemple arbre1;;
+intersection exemple arbre1;;
+difference exemple arbre1;;
+
