@@ -218,13 +218,13 @@ let rec segmente a x=
   | Noeud(Vide,_,Vide)  -> (Vide,Vide,false)
 
   | Noeud(fg,e,fd) when e=x -> (fg,fd,true)
-  | Noeud(fg,e,fd) when e<x -> let fgg,fgd,x_dans_fg = segmente fg x in
+  | Noeud(fg,e,fd) when e<x ->  let fgg,fgd,x_dans_fg = segmente fg x in
                                   (
                                     fgg,
                                     Noeud(fgd,e,fd),
                                     x_dans_fg
                                   )
-  | Noeud(fg,e,fd) -> let fgg,fgd,x_dans_fd = segmente fd x in
+  | Noeud(fg,e,fd) ->           let fgg,fgd,x_dans_fd = segmente fd x in
                                   (
                                     fgd,
                                     Noeud(fg,e,fgg),
@@ -233,9 +233,6 @@ let rec segmente a x=
 ;;  
 
   (* Finir l'exo 5 pour le 21/09/2020 *)
-
-
-
 
   let rec reunion a1 a2 =
     match a1,a2 with
@@ -266,7 +263,6 @@ let rec intersection a1 a2=
 ;;
 
 let rec difference a b=
-    (* renvoie un ABR contenant les Ã©tiquettes de a qui ne sont pas dans b*)
     match a,b with
         | Vide,_    -> Vide
         |_,Vide     -> a
@@ -291,3 +287,109 @@ reunion exemple arbre1;;
 intersection exemple arbre1;;
 difference exemple arbre1;;
 
+
+
+(* Exercice 3 : Reconstruire un arbre à partir de la liste de ses noeuds *)
+
+(* -- 1 *)
+
+type 'a morceauDArbre = V | E of 'a;;
+
+
+let reconstruit1_Rec l =
+  let rec aux l pile =
+    match l with
+    | [] -> (match pile with 
+            | [res] -> res
+            | _ -> failwith "Erreur")
+
+    | V::q -> aux q (Vide::pile)
+    | E x::q -> match pile with
+                  | fd::fg::suite -> aux q (Noeud(fg,x,fd)::suite)
+                  | _ -> failwith "Erreur2"
+    in aux l []
+;;
+
+let test1 = [V;V;E 1;V;E 5;V;V;E 2;V;E 0;V;V;E 3;E 2;E 2];;
+let test2 = [|V;V;E 1;V;E 5;V;V;E 2;V;E 0;V;V;E 3;E 2;E 2|];;
+
+
+reconstruit1_Rec test1;;
+
+let reconstruit1_Imp t=
+  let pile = Stack.create () in
+
+  for i=0 to Array.length t-1 do
+    match t.(i) with
+    | V -> Stack.push Vide  pile
+    | E x -> let fg,fd =  Stack.pop pile,
+                          Stack.pop pile in 
+                                          Stack.push (Noeud(fg,x,fd)) pile
+  done;
+
+  let res = Stack.pop pile in
+  if not (Stack.is_empty pile) then
+    failwith "erreur syntaxe"
+  else
+    res
+;;
+  
+reconstruit1_Rec test1;;
+reconstruit1_Imp test2;;
+
+
+(* -- 2 *)
+
+let reconstruit2_Imp t=
+  let file = Queue.create () in
+
+  for i=0 to Array.length t-1 do
+    match t.(i) with
+    | V -> Queue.add Vide file
+    | E x -> let fg,fd =  Queue.take file,
+                          Queue.take file in 
+                                          Queue.add  (Noeud(fg,x,fd)) file
+  done;   
+
+  let res = Queue.take file in
+  if not (Queue.is_empty file) then
+    failwith "erreur syntaxe"
+  else
+    res
+;;
+
+let test3 = [|V;V;V;V;V;E 2;V;V;E 3;E 0;V;E 1;E 2;E 5;E 2|];;
+
+reconstruit2_Imp test3;;
+
+(* Pour le 24/09 finir l'exercice 3 *)
+
+(* Cours :  *)
+(* II - Tas *)
+
+  (* II.1 - Intro *)
+
+  (* Un tas est un type d'arbre permettant la recherche efficace du max.*)
+  (* Autres avantages :   - On peut controler efficacement sa hauteur *)
+                      (*  -On peut en faire une version mutable facilement au sein d'un tableau *)
+
+  (* II.2 - Definition *)
+
+    (* Soit a un arbre binaire. On dit que c'est un tas lorsque ∀ noeud de a, 
+    étiquette(noeud) > étiquette(fils) *)
+
+          (*        5         *)
+          (*      /   \       *)
+          (*    2     4       *)
+          (*   /     /        *)
+          (*  0     2         *)
+          (*         \        *)
+          (*          1       *)
+
+          (* Ce tas est un tas-max *)
+          (* Si on permutte les fils d et g d'un tas, il reste un tas *)
+
+          (* Le max d'un tas est l'étiquette de la racine *)
+
+
+    (* Pour le 24/09 : Faire une fonction qui teste si un arbre est un tas *)
