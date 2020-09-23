@@ -393,3 +393,18 @@ reconstruit2_Imp test3;;
 
 
     (* Pour le 24/09 : Faire une fonction qui teste si un arbre est un tas *)
+
+let estUnTas a=
+  let rec aux a xprec=
+    match a with
+    | Vide -> true
+    | Noeud(fg,x,fd) when xprec >= x -> aux fg x && aux fd x
+    | _ -> false
+    in 
+
+      match a with
+      | Vide -> true
+      | Noeud(fg,e,fd) -> aux fg e && aux fd e
+;;
+
+estUnTas exemple;;
