@@ -408,3 +408,20 @@ let estUnTas a=
 ;;
 
 estUnTas exemple;;
+
+(* II.3 - File de priorité *)
+
+  (* Une file de priorité est une structure qui permet :
+        - d'inserer un élément associé à un nombre appeller priotité 
+        - d'extraire l'élément de priorité max *)
+
+  (* Un tas est un bon moyen de réaliser une file de priorité *)
+
+(* II.4 - Tas Persistant *)
+
+    (* Gardons le type d'arbre binaire utilisé jusqu'ici *)
+    (* Nous devons programmer les fonctions suivantes : 
+                            - maxi : 'a arbre -> 'a qui renvoie le max d'un tas 
+                            - max_extrait : 'a arbre -> a * 'a abre : renvoie le 
+                                                                      couple (max_t, tas avec les autres élem)
+                            - insertion : 'a -> 'a arbre : renvoie un nouveau tas *)
