@@ -542,3 +542,46 @@ let rec insere x t n =
 
   
 ;;
+
+
+(* Exercice 10 *)
+
+(* -- 1 *)
+
+let rec fusionAvecColle t1 t2 x =
+  match t1,t2 with
+  | Vide,Vide -> Noeud(Vide, x, Vide)
+  | Noeud(Vide,e1,Vide),Noeud(Vide,e2,Vide) -> if x>e1 && x>e2 then Noeud(t1,x,t2)
+                                               else if x>e1 then Noeud(t1,e2,Noeud(Vide,x,Vide))
+                                               else Noeud(Noeud(Vide,x,Vide),e1,t2)
+
+  | Noeud(tg1,e1,td1),Vide -> if x > e1 then Noeud(t1,x,Vide)
+                              else Noeud(fusionAvecColle tg1 td1 x,e1,Vide)
+
+  | Vide,Noeud(tg1,e1,td1) -> if x > e1 then Noeud(Vide,x,t1)
+                              else Noeud(Vide,e1,fusionAvecColle tg1 td1 x)
+
+  | Noeud(tg1,e1,td1),Noeud(tg2,e2,td2) -> if x>e1 && x>e2 then Noeud(t1,x,t2)
+                                           else if x>e1 then Noeud(t1,e2,fusionAvecColle tg2 td2 x)
+                                           else Noeud(fusionAvecColle tg1 td1 x,e1,t2)
+;;
+
+let tas1 = tas_of_list [1;2;3;4;5;7;9];;
+let tas2 = tas_of_list [4;3;9;0;2;4;1;8];;
+
+(* -- 2 *)
+
+
+let rec arbreBinaire_of_tas a=
+  match a with
+  | Vide -> Vide
+  | Noeud(fg,e,fd) -> fusionAvecColle (arbreBinaire_of_tas fg) (arbreBinaire_of_tas fd) e
+;;
+
+let feuille x = Noeud(Vide, x, Vide);;
+let exemple = Noeud (Noeud(Vide, 2, feuille 1),5,Noeud(Vide,3,Noeud(Noeud(Vide, 6, Vide),2,Vide)));;
+
+arbreBinaire_of_tas exemple;;
+
+
+
