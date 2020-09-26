@@ -518,3 +518,27 @@ Le tri est en O(nlog(n)) donc il est efficace, comparable au tri fusion
 
 (* Pour le 28/09 faire l'exercice 10 (1 et 2) *)
 
+(* Exercice 12 *)
+
+let rec insere x t n =
+
+  let bin_of_dec n= 
+    let rec aux n=
+      match n with
+      | 0 -> [] 
+      | _ -> n mod 2 ::aux (n/2)
+    in List.rev (aux n)
+  in
+  
+  let rec insere_aux x t n =
+    match t,n with
+    | Noeud(Vide,e,Vide),[0] -> Noeud(Noeud(Vide,x,Vide),e,Vide)
+    | Noeud(Vide,e,Vide),[1] -> Noeud(Vide,e,Noeud(Vide,x,Vide))
+    | Noeud(fg,e,fd),t::q when t=0 -> Noeud(insere_aux x fg q,e,fd)
+    | Noeud(fg,e,fd),t::q -> Noeud(fg,e,insere_aux x fd q)
+    | _,_ -> failwith "Erreur"
+
+  in insere_aux x t (bin_of_dec (n+1))
+
+  
+;;
