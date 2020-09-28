@@ -551,13 +551,9 @@ let rec insere x t n =
 let rec fusionAvecColle t1 t2 x =
   match t1,t2 with
   | Vide,Vide -> Noeud(Vide, x, Vide)
-  | Noeud(Vide,e1,Vide),Noeud(Vide,e2,Vide) -> if x>e1 && x>e2 then Noeud(t1,x,t2)
-                                               else if x>e1 then Noeud(t1,e2,Noeud(Vide,x,Vide))
-                                               else Noeud(Noeud(Vide,x,Vide),e1,t2)
 
   | Noeud(tg1,e1,td1),Vide -> if x > e1 then Noeud(t1,x,Vide)
                               else Noeud(fusionAvecColle tg1 td1 x,e1,Vide)
-
   | Vide,Noeud(tg1,e1,td1) -> if x > e1 then Noeud(Vide,x,t1)
                               else Noeud(Vide,e1,fusionAvecColle tg1 td1 x)
 
@@ -568,20 +564,135 @@ let rec fusionAvecColle t1 t2 x =
 
 let tas1 = tas_of_list [1;2;3;4;5;7;9];;
 let tas2 = tas_of_list [4;3;9;0;2;4;1;8];;
-
+fusionAvecColle tas1 tas2 3;;
 (* -- 2 *)
 
 
-let rec arbreBinaire_of_tas a=
+let rec tas_of_arbre a=
   match a with
   | Vide -> Vide
-  | Noeud(fg,e,fd) -> fusionAvecColle (arbreBinaire_of_tas fg) (arbreBinaire_of_tas fd) e
+  | Noeud(fg,e,fd) -> fusionAvecColle (tas_of_arbre fg) (tas_of_arbre fd) e
 ;;
 
 let feuille x = Noeud(Vide, x, Vide);;
 let exemple = Noeud (Noeud(Vide, 2, feuille 1),5,Noeud(Vide,3,Noeud(Noeud(Vide, 6, Vide),2,Vide)));;
 
-arbreBinaire_of_tas exemple;;
+tas_of_arbre exemple;;
 
+(* Notre premiere version de tas_of_list a une complexité de O(nlogn). Nous devons faire mieux : *)
+(* L'arbre est parfait de hauteur p-1, il nous faut 2**(p)-1 éléments 
+   dont feuilles 2**(p-1) et 2**(p-1)-1 noeud interne*)
+
+(* On prend une liste de longueur 2**(p)-1 et on la coupe en 2 *)
+
+(* Tas_of_list amélioré (Floyd) *)
+
+(* Etape 1 : on découpe la liste en deux. La premiere partie moitié deviendra des feuille et l'autre servira de colle *)
+
+let rec decoupe l=
+  (* Renvoie deux listes: - une liste de feuille de longueur (l+1)/2 
+                          - une liste des éléments restant de longueur l/2*)
+  match l with
+  |[]-> [],[]
+  |[a]->[feuille a],[]
+  |a::b::q-> let l1,l2 = decoupe q in 
+             (feuille a)::l1,b::l2
+;;
+
+let testdecoupe = [3;2;7;9;0;3;1];;
+
+decoupe testdecoupe;;
+
+(* La methode pour rassembler le tout : *)
+(* On maintient une file d'attente de petits tas. Initialement, on y met toute les feuilles *)
+
+
+type 'a file = {entree :'a list; sortie : 'a list};;
+let fileVide = {entree=[]; sortie=[]};;
+
+let enfile x f =
+  {entree = (x::f.entree) ; sortie = f.sortie}
+  ;;
+
+let rec defile f =
+  match f.sortie with
+  | [] -> if f.entree <> [] then defile {entree = [] ; sortie = List.rev f.entree}
+            else failwith "Erreur : File Vide"
+  | t::q -> (t,{entree = f.entree ; sortie = q})
+  ;;
+
+let testfile = {entree = [] ; sortie = []};; 
+defile testfile;;
+
+let enfile_liste l f =
+  List.fold_left (fun file elem -> enfile elem file) f l;;
+
+let egales f1 f2=
+  ((f1.sortie)@(List.rev f1.entree)) = ((f2.sortie)@(List.rev f2.entree))
+;;
+
+(* Pour charger un fichier library
+# directory "/mnt/c/Users/leosa/Desktop/INFO/CPGE/MP/Library/File.ml"
+# use "file.ml" 
+*)
+
+let tas_of_list_Floyd l=
+  let l_feuille,l_colle_initial = decoupe l in
+  let f_feuille = enfile_liste l_feuille fileVide in
+  let rec aux file colle=
+    if colle=[] then
+      let res,_ = defile file in res
+    else
+    match defile file,defile file,colle with
+    | (t1,_),(t2,suiteFile),colle::q -> aux 
+                                          (enfile (fusionAvecColle t1 t2 colle) file) 
+                                          q
+    | _ -> failwith "Erreur : La liste n'a pas le bon nombre d'élément"                                      
+    in aux f_feuille l_colle_initial
+;;
+
+tas_of_list_Floyd testdecoupe;;
+
+
+(* Complexité : 
+
+- fusionAvecColle t1 t2 x : O(hauteur) 
+∀ k ∈ ℕ, soit Ck la complexité max de fusionAvecColle de deux tas de hauteur ≤ hypot
+Alors C0=O(1)
+      ∀ k ∈ ℕ*, Ck = C(k-1)+O(1)
+D'où Ck = O(h)
+
+∀ i de p-1 à 0
+La construction de l'étage necessite 2**i fusions d'arbre de hauteur p-2-i
+
+D'où cxt 2**i*O(p-i)
+          O(2**i *(p-i))
+
+D'où cxté : Σ(i=0 -> p-1) O(2**i(p-i)) = O(Σ(i=0 -> p-1) 2**i (p-i))    (serie à termes ≥ 0)
+                                       = O(p(2**p-1)- Σ(i=1 -> p-1)i2*i)
+
+                                       On note f:x -> Σ(i=1->p-1) i2*i
+                                               f':x -> Σ(i=1->p-1) i2*(i-1)
+
+                                      Or ∀ x≠1 : f(x)=(x-x**p)/(1-x)
+                                      D'où ∀ x≠1 : (1-px**(p-1)(1-x)+xx**p)/(1-x)²
+
+                                      D'où Σ(i=1->p-1) i2*i = 2f'(2)
+                                                            = (p-1)*2**(p-1)-p2**p+2
+
+                                      Finalment : cxt = O(p*2**p-p-(p-1)*2**(p+1)+p*2**p-2)
+                                                      = O(2**(p+1)-p-2)
+                                                      = O(2**p)
+                                                      = O(Longueur de la liste initial)
+
+                                      Cette méthode est plus efficace que la méthode naive
+*)
+
+(* II-5 : Tas mutables *)
+
+
+(* Un tas peut être facilement enregistré dans un simple tableau *)
+(* De plus, on peut alors toujours faire en sorte d'avoir un arbre complet gauche *)
+(* L'idée est de numéroter les noeuds selon un parcours en largeur *)
 
 
