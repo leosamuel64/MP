@@ -695,4 +695,178 @@ D'où cxté : Σ(i=0 -> p-1) O(2**i(p-i)) = O(Σ(i=0 -> p-1) 2**i (p-i))    (ser
 (* De plus, on peut alors toujours faire en sorte d'avoir un arbre complet gauche *)
 (* L'idée est de numéroter les noeuds selon un parcours en largeur *)
 
+(* Prop : Soit a un arbre binaire dont on numérote les noeuds selon un parcourt en largeur en partant de 1 *)
+(* Soit n=|a|. On suppose que a complet gauche *)
+(* ∀ i in in ⟦1,n⟧, le numéro du fils gauche du noeud i (s'il existe) est 2i et le numero du fils droit 
+   (s'il existe) est 2i+1 *)
+
+(* Demo : Soit N le noeud numéro i. Soit p sa profondeur *)
+
+       (* (  2**p-1   )
+( i-2**p )      /   \
+(2*(i-2**p))   fg   fd *)
+
+
+(* Il y a (2**p -1) élements dans les etages 0 à p-1 (arbre parfait de hauteur p-1 *)
+(* Il y a (i-2**p) élements à gauche de N*)
+
+(* Soit fg et fd les fils de N *)
+(* il y a 2(i-2**p) elements à gauche de fg car ce sont les fils des éléments à gauche de i, et a est complet gauche *)
+
+(* Donc le numéro de fg est  2**p-1 + 2i-2**(p+1) +1 = 2i*)
+(* Donc le numéro de fd est 2i+1 *)
+(* ----------- *)
+
+(* NB : en base 2, le numéro du fg s'obtient en rajoutant 0 à la fin et le numéro du fd *)
+(*      en rajoutant un 1. Par exemple comme dans l'Exercice 12 *)
+
+(* Cependant, les tableaux sont d'ordinaire numéroté en partant de 0. Voyant ce que devienent les formules *)
+
+(* Soit N un noeud de numéro i dans la numerotation en partant de i et j dans la numérotation 
+en partant de 1 : Donc j=i-1 *)
+
+(* Soit ig,id,jg,jd les numéros des fils g et d dans la 1er et 2emme numérotation *)
+
+(* ig=2i *)
+(* jg = ig-1=2i-1= 2j+1 *)
+
+(* Et jd = ig-1 = 2i+1-1= 2j+2   (Plus de rapport simple avec l'éccriture en base 2) *)
+
+(* En résumé : avec cette nouvelle numérotation :  *)
+
+(* Le fg du neoud numéro j a pour numéro 2j+1  et le fd 2j+2*)
+
+(* Soit t un tas complet gauche et n=|t|.
+   Pour l'enregistrer dans un tableau. On enregistre ∀ j ∈ ⟦0,n⟦, l'étiquette du noeud numéro j dans la case j *)
+
+(* Souvent, on peut laisser des cases vides à la fin du tableau pour permettre des insertions ulterieures *)
+(* On doit alors enregistrer le nombre d'éléments du tas à partir de 0 *)
+
+ 
+type 'a tasMutable = {
+                      mutable longueur :  int;
+                      donnees : 'a array
+                      };;
+
+(*  *)
+
+let nouveauTas n x = {longueur=0;donnees = Array.make n x};;
+
+(* t est un tas <=> ∀ i ∈ ⟦0,n⟦ t.donnees.(i) ≥ t.donnees.(2i+1) t.donnees.(i) ≥ t.donnees.(2i) *)
+(* Soit i ∈ ℕ, i =  ⌞((2i+2)-1/)2⌟ = ⌞((2i+1)-1)/2⌟ *)
+(* Donc k ∈ ⟦1,n⟦, le numero du père de k est  ⌞(k-1)/2⌟ *)
+(* Donc t est un tas ssi ∀ k ∈ ⟦1,n⟦ t.donnes.((k-1)/2)≥ t.donnees.(k) *)
+
+let estUnTas t=
+  (* Indique si t est un tas *)
+  (* ∀ k ∈ ⟦1,n⟦ t.donnes.((k-1)/2)≥ t.donnees.(k) *)
+  let res = ref true in
+  for k=0 to (t.longueur-1) do
+    if not(t.donnees.((k-1)/2) >= t.donnees.(k)) then
+      res:=false 
+  done;
+  !res
+;;
+
+let estUnTasOpti t=
+  let res = ref true in
+  let k = ref 0 in
+  while !k<=(t.longueur-1) && !res=true do
+    if not(t.donnees.((!k-1)/2) >= t.donnees.(!k)) then
+      res:=false;
+    k:=!k+1
+  done;
+  !res
+;;
+
+let tas = {longueur=7;donnees=[|5;4;3;2;1;2;18|]};;
+let pastas = {longueur=5;donnees=[|1;4;2;7;1|]};;
+
+estUnTas tas;;
+estUnTas pastas;;
+
+estUnTasOpti tas;;
+estUnTasOpti pastas;;
+
+let estUnTasRec t=
+  let n = t.longueur in
+  let rec aux k =
+    if k=n then true
+    else t.donnees.((k-1)/2) >= t.donnees.(k) && aux (k+1)
+  in aux 1
+;;
+
+estUnTasRec tas;;
+estUnTasRec pastas;;
+
+(* insertion d'un élément *)
+(* On place le nouvel élément au prochain emplacement libre *)
+(* On l'echange avec son pere puis son grand père etc jusqu'a que se soit a nouveau un tas  *)
+
+
+let insere t x=
+  let transpose tab i j=
+    let tmp = tab.(i) in
+    tab.(i) <- tab.(j);
+    tab.(j) <- tmp
+  in
+
+  let rec remonteASaPlace tab k=
+    (* Entrée : un tableau qui represente un arbre binaire
+       Precondition : la portion tab.(0:k) represente un tas 
+       Effet : en sortie, tab.(0;k+1) represente un tas *)
+    if k=0 || tab.((k-1)/2) >= tab.(k) then ()
+    else (
+      transpose tab k ((k-1)/2);
+      remonteASaPlace tab ((k-1)/2)
+        )
+  in 
+
+  let n = t.longueur in
+  t.donnees.(n) <- x;
+  t.longueur <- n+1;
+  remonteASaPlace t.donnees n
+;;
+
+let tas = {longueur=5;donnees=[|5;4;3;2;1;2;18|]};;
+insere tas 15;;
+tas;;
+
+
+
+let extraitMax t =
+  let rec descendASaPlace tab k n=
+    (*  tab est un tableau representant un arbre binaire
+      Preconditions : Les sous-arbre enracinés en 2k et 2k+1  sont des tas
+      Effet : à la fin, l'arbre enraciné en k est un tas
+    *)
+    let transpose tab i j=
+      let tmp = tab.(i) in
+      tab.(i) <- tab.(j);
+      tab.(j) <- tmp
+    in
+    (* Cas 1 : on doit descendre tab.(k) à droite *)
+    if 2*k+2<n && tab.(k) <= tab.(2*k+1) && tab.(2*k)> tab.(k) then (
+      transpose tab k (2*k+2);
+      descendASaPlace tab (2*k+2) n
+      )
+    else if 2*k+1<n && tab.(k)<tab.(2*k+1) then (
+      transpose tab k (2*k+1);
+      descendASaPlace tab (2*k+1) n
+      )
+  in
+
+  let n = t.longueur in
+  if n=0 then failwith "Erreur : Tas Vide" 
+    else (
+    let maxi = t.donnees in
+    t.donnees.(0) <- t.donnees.(n-1);
+    t.longueur <- n-1;
+    descendASaPlace t.donnees 0 (n-1);
+    maxi
+    )
+;;
+
+(* Pour le 5/10 : Programmer le tri par tas avec des tas mutables *)
+
 
