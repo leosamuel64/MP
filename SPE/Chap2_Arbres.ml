@@ -846,7 +846,7 @@ let extraitMax t =
       tab.(j) <- tmp
     in
     (* Cas 1 : on doit descendre tab.(k) à droite *)
-    if 2*k+2<n && tab.(k) <= tab.(2*k+1) && tab.(2*k)> tab.(k) then (
+    if 2*k+2<n && tab.(k) <= tab.(2*k+1) && tab.(2*k)>= tab.(k) then (
       transpose tab k (2*k+2);
       descendASaPlace tab (2*k+2) n
       )
@@ -859,7 +859,7 @@ let extraitMax t =
   let n = t.longueur in
   if n=0 then failwith "Erreur : Tas Vide" 
     else (
-    let maxi = t.donnees in
+    let maxi = t.donnees.(0) in
     t.donnees.(0) <- t.donnees.(n-1);
     t.longueur <- n-1;
     descendASaPlace t.donnees 0 (n-1);
@@ -868,5 +868,26 @@ let extraitMax t =
 ;;
 
 (* Pour le 5/10 : Programmer le tri par tas avec des tas mutables *)
+
+let triParTas l=
+  let rec aux t=
+    match t with
+    | Vide -> []
+    | _ -> let max,suitetas = max_extrait t in 
+                      max::(aux suitetas)
+  in aux (tas_of_list l)
+;;
+
+let triParTasMutable t=
+  let tas = nouveauTas (Array.length t) t.(0) in
+  let res = Array.make (tas.longueur) t.(0) in
+  for i=0 to (Array.length t-1) do
+    insere tas t.(i);
+  done;
+tas
+;;
+
+let test = triParTasMutable [|4;3;9;4;3;8;0|];;
+extraitMax test;;extraitMax test;;extraitMax test;;extraitMax test;;
 
 
