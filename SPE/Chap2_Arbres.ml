@@ -846,7 +846,7 @@ let extraitMax t =
       tab.(j) <- tmp
     in
     (* Cas 1 : on doit descendre tab.(k) à droite *)
-    if 2*k+2<n && tab.(k) <= tab.(2*k+1) && tab.(2*k)>= tab.(k) then (
+    if (2*k+2)<n && tab.(k) <= tab.(2*k+2) && tab.(2*k)>= tab.(k) then (
       transpose tab k (2*k+2);
       descendASaPlace tab (2*k+2) n
       )
@@ -869,25 +869,45 @@ let extraitMax t =
 
 (* Pour le 5/10 : Programmer le tri par tas avec des tas mutables *)
 
-let triParTas l=
-  let rec aux t=
-    match t with
-    | Vide -> []
-    | _ -> let max,suitetas = max_extrait t in 
-                      max::(aux suitetas)
-  in aux (tas_of_list l)
-;;
-
 let triParTasMutable t=
-  let tas = nouveauTas (Array.length t) t.(0) in
-  let res = Array.make (tas.longueur) t.(0) in
+  let n = Array.length t in
+  let tas = nouveauTas n t.(0) in
+  let res = Array.make n t.(0) in
   for i=0 to (Array.length t-1) do
     insere tas t.(i);
   done;
-tas
+  for i=0 to (n-1) do
+    res.(i) <- extraitMax tas
+  done;
+res
 ;;
 
-let test = triParTasMutable [|4;3;9;4;3;8;0|];;
-extraitMax test;;extraitMax test;;extraitMax test;;extraitMax test;;
+let test =triParTasMutable [|4;3;9;4;3;8;3|];;
+
+
+let triParTasMutable2 t=
+  let reverse t = 
+    let len=Array.length t in
+    for i=0 to (len/2) do 
+      let temp = t.(i) in
+      t.(i) <- t.(len-i-1);
+      t.(len-i-1) <- temp         
+    done;
+    t
+  in
+  let n = Array.length t in
+  let tas = nouveauTas n t.(0) in
+  for i=0 to (Array.length t-1) do
+    insere tas t.(i);
+  done;
+  for i=0 to (n-1) do
+    tas.donnees.(n-i-1) <- extraitMax tas
+  done;
+  reverse tas.donnees
+;;
+
+let test =triParTasMutable2 [|7;8;3;9;5|];;
+
+
 
 
