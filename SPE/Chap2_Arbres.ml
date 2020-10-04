@@ -884,17 +884,17 @@ res
 
 let test =triParTasMutable [|4;3;9;4;3;8;3|];;
 
+let reverse t = 
+  let len=Array.length t in
+  for i=0 to (len/2) do 
+    let temp = t.(i) in
+    t.(i) <- t.(len-i-1);
+    t.(len-i-1) <- temp         
+  done;
+  t
+;;
 
 let triParTasMutable2 t=
-  let reverse t = 
-    let len=Array.length t in
-    for i=0 to (len/2) do 
-      let temp = t.(i) in
-      t.(i) <- t.(len-i-1);
-      t.(len-i-1) <- temp         
-    done;
-    t
-  in
   let n = Array.length t in
   let tas = nouveauTas n t.(0) in
   for i=0 to (Array.length t-1) do
