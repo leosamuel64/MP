@@ -55,12 +55,40 @@ def distanceMin(l):
   return min
 
 
-print(distanceMin([0,4,2,8,6,10]))
+# print(distanceMin([0,4,2,8,6,10]))
 # On a une compllexité en O(|l|*log|l| + |l|) = O(|l|*log|l|)
+
+
+# tri fusion
+
+
 
 # Exercice 5 : Elément dans un maximum d'intervalles
 
+# Exercice 6 : tri fusion
 
+def partition(t):
+  return t[0:len(t)//2],t[len(t)//2:len(t)]
+
+# print(partitionne([1,4,3,2,4]))
+
+def fusion(t1,t2):
+  if len(t1)==0:
+    return t2
+  elif len(t2)==0:
+    return t1
+  elif t1[0]<t2[0]:
+    return [t1[0]]+fusion(t1[1:],t2)
+  else:
+    return [t2[0]]+fusion(t1,t2[1:])
+
+def triFusion(t):
+  if len(t)<=1:
+    return t
+  t1,t2=partition(t)
+  return fusion(triFusion(t1),triFusion(t2))
+
+print(triFusion([0,4,3,9,0,10,4,2]))
 
 
 

@@ -846,12 +846,12 @@ let extraitMax t =
       tab.(j) <- tmp
     in
     (* Cas 1 : on doit descendre tab.(k) à droite *)
-    if (2*k+2)<n && tab.(k) <= tab.(2*k+2) && tab.(2*k)>= tab.(k) then (
+    if (2*k+2)<n && tab.(2*k+1) <= tab.(2*k+2) && tab.(2*k+2)>= tab.(k) then (
       transpose tab k (2*k+2);
       descendASaPlace tab (2*k+2) n
       )
     else if 2*k+1<n && tab.(k)<tab.(2*k+1) then (
-      transpose tab k (2*k+1);
+      transpose tab (2*k+1) k;
       descendASaPlace tab (2*k+1) n
       )
   in
@@ -906,7 +906,7 @@ let triParTasMutable2 t=
   reverse tas.donnees
 ;;
 
-let test =triParTasMutable2 [|7;8;3;9;5|];;
+let test =triParTasMutable2 [|7;8;10;0;3;3;0;3;1;9;4;9;5|];;
 
 
 
