@@ -88,7 +88,86 @@ def triFusion(t):
   t1,t2=partition(t)
   return fusion(triFusion(t1),triFusion(t2))
 
-print(triFusion([0,4,3,9,0,10,4,2]))
+# print(triFusion([0,4,3,9,0,10,4,2]))
+
+
+# Cours
+
+# Introduction
+
+# On a déjà étudié des tris dans les chapitres précedants : fusion et par tas
+
+# 1-Pourquoi trier ?
+# Application : pouvoir utiliser une recherche dichotomique
+
+def dicho(t,x):
+  deb,fin,trouvé = 0,len(t),False
+  
+  while deb < fin and (not trouvé):
+    m=(deb+fin)//2
+    if x<t[m]:
+      fin=m
+    elif x>t[m]:
+      deb=m+1
+    else:
+      trouvé=True
+  return trouvé
+
+# print(dicho([1,2,3,4,5],10))
+
+
+def dichoRec(t,x):
+  def aux(t,x,deb,fin):
+    m=(deb+fin)//2
+    if deb==fin:
+      return False
+    elif x<t[m]:
+      return aux(t,x,deb,m)
+    elif x>t[m]:
+      return aux(t,x,m+1,fin)
+    else:
+      return True
+  return aux(t,x,0,len(t))
+
+# print(dichoRec([1,2,3,4,5,6],5))
+
+# 2-Ccritère d'apreciation d'un tri:
+ 
+# - La complexité : on compte le nombre de comparaisons (mais en gardant en tête les autres opérations)
+# - La complexité mémoire : Evitons, si on le peut, de créer de nombreuse copies du tableau à trier
+
+# Un algo sera dit "en place" si on arrive a rester toujours dans le même tableau (Tri par tas mutable)
+# 
+# En géneral, un tri en place sera une procédure, un tri pas en place une fonction.
+
+# utilisation de fonction procedure
+# Calcul de la mediane d'un tableau
+
+# Avec une fonction de tri pas en place
+def mediane(t):
+  return sorted(t)[len(t)//2]
+
+# Avec une fonction de tri en place
+def mediane2(t):
+  t.sort()
+  return t[len(t)//2]
+
+# Cette version tri le tableau
+# Copie d'un tableau t2=t[:]
+
+# 3 - Tri par insertion
+# 3.1- Sur listes en caml
+#   Fait
+
+# 3.2- complexité
+
+# insere x l -> O(n) dans le pire des cas   (Quand x > max(l))
+#               O(1) dans le meilleur cas   (Quand x < min(l))
+
+# triInsertion -> O(n(n+1)/2)=O(n²) dans le pire cas
+#                 O(n) dans le meilleur cas
+
+# 
 
 
 

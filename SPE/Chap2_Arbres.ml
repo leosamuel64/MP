@@ -879,7 +879,6 @@ let triParTasMutable t=
   for i=0 to (n-1) do
     res.(i) <- extraitMax tas
   done;
-res
 ;;
 
 let test =triParTasMutable [|4;3;9;4;3;8;3|];;
@@ -903,11 +902,39 @@ let triParTasMutable2 t=
   for i=0 to (n-1) do
     tas.donnees.(n-i-1) <- extraitMax tas
   done;
-  reverse tas.donnees
 ;;
 
 let test =triParTasMutable2 [|7;8;10;0;3;3;0;3;1;9;4;9;5|];;
 
+(* Tri par insertion *)
 
+let rec insertion x l=
+  (*  Entrées : x un élément
+                l une liste triée
+      Sortie : liste triée obtenue en insérant x dans l à la "bonne" place
+       *)
+  match l with
+  | [] -> [x]
+  | t::q when t>x -> x::t::q
+  | t::q -> t::(insertion x q)
+;;
 
+insertion 4 [];;
 
+let rec triInsertion l=
+    match l with
+    | [] -> []
+    | t::q -> insertion t (triInsertion q)
+;;
+
+triInsertion [7;8;10;0;3;3;0;3;1;9;4;9;5];;
+
+let rec randomList n=
+  match n with
+  | 0 -> []
+  | _ -> (Random.int 100)::(randomList (n-1))
+;;
+
+randomList 100;;
+
+triInsertion (randomList 100);;
