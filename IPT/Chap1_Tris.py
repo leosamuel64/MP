@@ -65,6 +65,49 @@ def distanceMin(l):
 
 # Exercice 5 : Elément dans un maximum d'intervalles
 
+def intervalle(i):
+  res = []
+  for k in range (i[0],i[1]+1):
+    res.append(k)
+  return res
+
+# O(n) 
+
+# print(intervalle((1,10)))
+
+  
+def grandeListe(l):
+  listeDesEntiers=[]
+  for i in l:
+    listeDesEntiers += intervalle(i)
+  return listeDesEntiers
+
+# O(n*len(l)) 
+
+def incr_dico(dico,cle):
+  try:
+    dico[cle]+=1
+  except:
+    dico[cle]=1
+
+def maximum(l):
+  gl = grandeListe(l)
+  dico={}
+  res = ""
+  for x in gl:
+    incr_dico(dico,str(x))
+  maxi = 0
+  
+  for cle in dico:
+    if dico[cle]>maxi:
+      maxi = dico[cle]
+      res=cle
+  return int(res)
+  
+print(maximum([(1,10),(3,15),(2,17),(8,15)]))
+
+# O(max(taille intervalle)*(nombre d'intervalle))
+
 # Exercice 6 : tri fusion
 
 def partition(t):
@@ -167,8 +210,159 @@ def mediane2(t):
 # triInsertion -> O(n(n+1)/2)=O(n²) dans le pire cas
 #                 O(n) dans le meilleur cas
 
-# 
+
+# 3.3 Avec des tableaux en python
+
+# On peut pogrammer le tri par insertion en place
+
+# Principe :
+# [ , , , , , , , , , ]
+#          ^
+#  {Trié}  i  
+# soit t un tableau et n=len(t)
+# ∀ i in ⟦0,n⟦ :
+# inserer t[i] "à sa place" dans t[0:i]
+
+def cherche(t,v,i):
+  for i in range(i):
+    if t[i]>v:
+      return i
+    
+def insere(t,i):
+  """
+  Précondition : t[0:i] est trié
+  Effet de bord : déplace t[i] pour que t[0:i+1] devienne trié 
+  """
+  j=i       # Contiendra la place finale de x
+  x=t[i]
+  while j!=0 and t[j-1]>x:
+    t[j]=t[j-1]
+    j-=1
+  t[j]=x
+
+def triInsertion(t):
+  """
+  Procédure qui tri t
+  """
+  for i in range(len(t)):
+    #ici, t[0:i] est trié
+    insere(t,i)
+    #ici, t[0:i+1] est trié
+
+# t=[1,2,4,3,5,8,7,6]
+# triInsertion(t)
+# print(t)
+     
+
+# Pour le 12/10 : Faire l'exercice 13
+
+# 4- Tri fusion sur tableaux python
 
 
+# print(partitionne([1,4,3,2,4]))
+
+# def fusion(t1,t2):
+#   res = []
+#   for i in range(max(len(t1),len(t2))):
+#     a,b=min(t1[i],t2[i]),max(t1[i],t2[i])
+#     res.append(a)
+#     res.append(b)
+#   return res
+  #  Ne marche que si les tableaux ont la même dimension
+
+def fusion(t1,t2):
+  res=[]
+  i1=0
+  i2=0
+
+  while i1<len(t1) and i2<len(t2):
+    if t1[i1]<t2[i2]:
+      res.append(t1[i1])
+      i1+=1
+    elif t2[i2]<t1[i1]:
+      res.append(t2[i2])
+      i2+=1
+
+  return res+t1[i1:]+t2[i2:]
+
+
+print(fusion([1,3,5],[2,4,6]))
+
+def triFusion(t):
+  n=len(t)
+  if n<2:
+    return t
+
+  t1, t2= t[0:n//2], t[n//2:n]
+  
+  t1Trié= triFusion(t1)
+  t2Trié= triFusion(t2)
+
+  return fusion(t1Trié,t2Trié)
+
+print(triFusion([1,4,2,5,7]))
+
+# Analyse:
+# complexité : O(nlogn)
+# Memoire : pas en place -> occupe de la mémoire
+
+# Exemple : triFusion([1,4,0,9,8,12])
+            # [1,4,0]                 [9,8,0]
+          # [1]     [4,0]          [9]      [8,0]
+          # [1]    [4]  [0]        [9]     [8]  [0]
+
+# Exercice 7 : Nombre d'inversion
+
+# Rappel : Soit n ∈ ℕ et σ ∈ Sgothic_n
+# Une inversion de de σ est un couple (i,j) ∈ ⟦0,n⟦²
+# tq :i<j et σi<j
+
+# Signature de σ : ε(σ)=(-1)**(nb d'inversion)
+# Informatiquement : σ sera représenté par le tableau
+# [σ(0),σ(1),σ(2),σ(3),...,σ(n-1)]
+
+        #  (0,1,2,3,4)
+# Exemple: [4,1,3,2,0] (n=5)
+#       Combien d'inversion
+# 0 est en inversion avec 1,2,3,4
+# 1 est en inversion avec 4
+# 2 est en inversion avec 3,4
+# 3 est en inversion avec 4
+# Il y a alors 8 inversions et ε(σ)=(-1)**8=1
+
+def nb_inversion(σ):
+  """
+  Entrée : σ un tableau qui représente une permutation
+  Sortie : Le nombre d'inversion de σ
+  """
+  res=0
+  n=len(σ)
+  for i in range(0,n):
+  # Cherchons les j tq (i,j) est une inversion
+    for j in range(i+1,n):
+      if σ[i]>σ[j]:
+        res+=1
+  return res
+
+print(nb_inversion([4,1,3,2,0]))
+
+# Methode diviser pour regner : pour le nombre d'inversions
+
+# Soit t un tableau et n =len(t)
+# Si n <= 1: 0 inversion
+# Si n >= 1:    - diviser : soient t1[:n//2] et t2[n//2:]
+              # - Appel rec : On recupere le nombre d'inversion ds t1 et t2
+              # - regner : En deduire le nombre d'inversion de t
+
+              # On partitionne l'une des inversions de t en 3
+                  # -Les inversions de t1
+                  # -                de t2
+                  # - les couples i,j tq i ≤  ⌞n/2⌟
+                                          # j ≥  ⌞n/2⌟
+                                          # t[i]>t[j]
+              # Pendant la fusion
+              # len(t1)-i1 inversions
+              # 
+# Le programmer pour le  12/10 + exo 13 de tri
 
 
