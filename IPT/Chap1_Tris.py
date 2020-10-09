@@ -365,4 +365,75 @@ print(nb_inversion([4,1,3,2,0]))
               # 
 # Le programmer pour le  12/10 + exo 13 de tri
 
+def partition(t):
+  return t[0:len(t)//2],t[len(t)//2:len(t)]
 
+def nbInvDansFusion(t1,t2):
+  i1,i2=0,0
+  res=0
+  while i1< len(t1) and i2 < len(t2):
+    if t1[i1]< t2[i2]:
+      i1+=1
+    else:
+      i2+=1
+      res += len(t1)-i1
+  return res
+
+def nbInversion2(t):
+  if len(t) <=1: 
+    return 0
+  else:
+    t1,t2=partition(t)
+    res1 = nbInversion2(t1)
+    res2 = nbInversion2(t2)
+    res3 = nbInvDansFusion(t1,t2)
+    return res1 + res2 + res3
+  
+print(nbInversion2([4,1,3,2,0]))
+
+
+# Exercice 13 : insertion dichotomique
+
+def InsereEtDecale(t,i,j):
+    """ Met t[j] en t[i] et decale les éléments vers la droite """
+    tmp=t[j]
+    for k in range (j,i,-1):
+        t[k]=t[k-1]
+    t[i]=tmp
+
+# Soit n la longueur de t. Cn = O(n)
+
+def cherchePlaceEntre(t,deb,fin,x):
+  m= (deb+fin)//2
+  if deb==fin:
+    return deb
+  elif t[m]==x:
+    return m+1
+  elif x<t[m]:
+    return cherchePlaceEntre(t,deb,m,x)
+  else:
+    return cherchePlaceEntre(t,m+1,fin,x)
+
+# Soit n la longueur de t. α=log2(2)=1 et β=0 d'où α>β d'où Cn=O(n)
+
+
+def cherchePlaceDicho(t,i):
+    return cherchePlaceEntre(t,0,i,t[i])
+
+# Soit n la longueur de t. Cn = O(n)
+
+
+def triInsertionDicho(t):
+  for i in range(1,len(t)):
+    k=cherchePlaceDicho(t,i)
+    InsereEtDecale(t,k,i)
+
+# Soit n la longueur de t. Cn=O(n*n*n)=O(n**3)
+
+
+t=[9,3,2,7,8,4,3]
+triInsertionDicho(t)
+print(t)
+
+# La complexité est quadratique donc le tri par insertion dichotomique n'est pas intérésant. 
+# (Cependant, il est en place...)
