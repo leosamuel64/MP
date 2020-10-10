@@ -313,7 +313,7 @@ print(triFusion([1,4,2,5,7]))
 
 # Exercice 7 : Nombre d'inversion
 
-# Rappel : Soit n ∈ ℕ et σ ∈ Sgothic_n
+# Rappel : Soit n ∈ ℕ et σ ∈ 𝔖n
 # Une inversion de de σ est un couple (i,j) ∈ ⟦0,n⟦²
 # tq :i<j et σi<j
 
@@ -346,6 +346,8 @@ def nb_inversion(σ):
 
 print(nb_inversion([4,1,3,2,0]))
 
+# Complexité en O(n²)
+
 # Methode diviser pour regner : pour le nombre d'inversions
 
 # Soit t un tableau et n =len(t)
@@ -371,7 +373,7 @@ def partition(t):
 def nbInvDansFusion(t1,t2):
   i1,i2=0,0
   res=0
-  while i1< len(t1) and i2 < len(t2):
+  while i1<len(t1) and i2<len(t2):
     if t1[i1]< t2[i2]:
       i1+=1
     else:
