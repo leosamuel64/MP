@@ -104,7 +104,7 @@ def maximum(l):
       res=cle
   return int(res)
   
-print(maximum([(1,10),(3,15),(2,17),(8,15)]))
+# print(maximum([(1,10),(3,15),(2,17),(8,15)]))
 
 # O(max(taille intervalle)*(nombre d'intervalle))
 
@@ -286,7 +286,7 @@ def fusion(t1,t2):
   return res+t1[i1:]+t2[i2:]
 
 
-print(fusion([1,3,5],[2,4,6]))
+# print(fusion([1,3,5],[2,4,6]))
 
 def triFusion(t):
   n=len(t)
@@ -300,7 +300,7 @@ def triFusion(t):
 
   return fusion(t1Trié,t2Trié)
 
-print(triFusion([1,4,2,5,7]))
+# print(triFusion([1,4,2,5,7]))
 
 # Analyse:
 # complexité : O(nlogn)
@@ -344,7 +344,7 @@ def nb_inversion(σ):
         res+=1
   return res
 
-print(nb_inversion([4,1,3,2,0]))
+# print(nb_inversion([4,1,3,2,0]))
 
 # Complexité en O(n²)
 
@@ -370,25 +370,37 @@ print(nb_inversion([4,1,3,2,0]))
 def partition(t):
   return t[0:len(t)//2],t[len(t)//2:len(t)]
 
+def permute(t,a,b):
+  """
+  Effectue sur t une permutation circulaire vers la droite des composantes
+  t[a:b] cad de t[a] à t[b-1]
+  """
+  x=t[b-1]
+  for k in range(0,b-a-1):
+    t[b-1-k]=t[b-2-k]
+  t[a]=x
+
+
 def nbInvDansFusion(t1,t2):
   i1,i2=0,0
   res=0
   while i1<len(t1) and i2<len(t2):
-    if t1[i1]< t2[i2]:
+    if t1[i1]<t2[i2]:
       i1+=1
     else:
       i2+=1
-      res += len(t1)-i1
+      res+=len(t1)-i1
+      permute()
   return res
 
 def nbInversion2(t):
-  if len(t) <=1: 
+  if len(t)<=1: 
     return 0
   else:
     t1,t2=partition(t)
-    res1 = nbInversion2(t1)
-    res2 = nbInversion2(t2)
-    res3 = nbInvDansFusion(t1,t2)
+    res1=nbInversion2(t1)
+    res2=nbInversion2(t2)
+    res3=nbInvDansFusion(t1,t2)
     return res1 + res2 + res3
   
 print(nbInversion2([4,1,3,2,0]))
@@ -433,9 +445,9 @@ def triInsertionDicho(t):
 # Soit n la longueur de t. Cn=O(n*n*n)=O(n**3)
 
 
-t=[9,3,2,7,8,4,3]
-triInsertionDicho(t)
-print(t)
+# t=[9,3,2,7,8,4,3]
+# triInsertionDicho(t)
+# print(t)
 
 # La complexité est quadratique donc le tri par insertion dichotomique n'est pas intérésant. 
 # (Cependant, il est en place...)
