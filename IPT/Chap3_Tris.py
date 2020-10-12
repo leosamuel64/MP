@@ -390,7 +390,6 @@ def nbInvDansFusion(t1,t2):
     else:
       i2+=1
       res+=len(t1)-i1
-      permute()
   return res
 
 def nbInversion2(t):
@@ -418,7 +417,7 @@ def InsereEtDecale(t,i,j):
 # Soit n la longueur de t. Cn = O(n)
 
 def cherchePlaceEntre(t,deb,fin,x):
-  m= (deb+fin)//2
+  m=(deb+fin)//2
   if deb==fin:
     return deb
   elif t[m]==x:
@@ -428,26 +427,104 @@ def cherchePlaceEntre(t,deb,fin,x):
   else:
     return cherchePlaceEntre(t,m+1,fin,x)
 
-# Soit n la longueur de t. α=log2(2)=1 et β=0 d'où α>β d'où Cn=O(n)
-
+# Soit n la longueur de t. α=log2(1)=0 et β=0 d'où α>β d'où Cn=O(log(n)).
+# Il n'y a plus de comparaison a part l'appel à la fonction auxiliaire.
 
 def cherchePlaceDicho(t,i):
     return cherchePlaceEntre(t,0,i,t[i])
 
-# Soit n la longueur de t. Cn = O(n)
-
+# Soit n la longueur de t. Cn = O(log(n))
 
 def triInsertionDicho(t):
   for i in range(1,len(t)):
     k=cherchePlaceDicho(t,i)
     InsereEtDecale(t,k,i)
 
-# Soit n la longueur de t. Cn=O(n*n*n)=O(n**3)
+# Soit n la longueur de t. Cn=O(n*(log(n)))=O(nlog(n))
 
 
 # t=[9,3,2,7,8,4,3]
 # triInsertionDicho(t)
 # print(t)
 
+# On n'a compté que le nombre de comparaison et on a plas compté l'insertion.
+
 # La complexité est quadratique donc le tri par insertion dichotomique n'est pas intérésant. 
 # (Cependant, il est en place...)
+
+# Au pire, l'insertion du ième élément coute O(i) operation sur sous tableau
+
+# 5- Tri par segmentation /ou/ tri rapide (Quick Sort) /ou/ tri de Hoare :
+# 5.1- Principe
+# 
+# semblable au tri fusion, mais pour la partie "diviser", on choisit un élément, qu'on appelle le "pivot"
+# et on separe le tableau ou la liste à trier en les élements ≤ pivot
+# 
+# 5.2- Sur listes Chainés (En Ocaml) 
+
+# 5.3- Complexité
+
+# - Supposons que les segmentations sont équilibrées au mieux à chaque appels
+# |petit|-|grand| ≤ 1
+# La complexité est Cn = O(n)     +     C(⌞(n-1)/2⌟)+C(⌞(n)/2⌟) + O(n)     
+#                    (segmentation)
+# Cn=O(nlog(n)) (comme le tri fusion)
+# On admet que ce cas est le meilleur
+
+# - Sinon, la découpe est déséquilibré à chaque segmentation (l'une des deux liste renvoyé est vide)
+# C'est le cas où la liste est déjà triée (dans l'ordre croissant ou décroissant)
+# A chaque appel réc on aura t<min q ou t> max q donc petits=[] ou grands=[]
+# Dans ce cas, la relation de récurrence devient :
+# C(n) = O(n) + C(0) + C(n-1) + O(n)
+#      = O(n²)
+
+# Le tri par segmentation est au mieux comme le tri fusion et au pire il est mauvais si le tableau est déjà
+# trié
+
+# Mais la complexité moyenne est de O(nlogn) a condition que tous les ordres sur la liste en entrée sont 
+# équiprobables
+
+# 5.4- Sur tableau
+# L'interêt principal du tri par segmentation est qu'il peut etre implementer
+# efficacement en place.
+
+# Pour gerer les appels récursifs, sans copie de tableaux, on utilise un fonction auxiliaire triEntre
+# qui pour un tableau t et 2 indices deb et fin et qui trie en place t[deb:fin]
+
+# L'etape clé est la segmentation
+
+# [  \\  ; deb ; ...  ...  ; fin ; \\ ]
+#         pivot
+
+# On veut arriver à la situation suivante
+# [ // ;         ;pivot;         ; // ]
+#       ≤ pivot         ≥ pivot
+
+# Invariant de boucle : 
+# - Le pivot es en [deb]
+# - les éléments de t[deb+1:i] sont ≤ pivot
+# - les éléments de t[i:j] sont > pivot
+
+def segmenteEntre(t,iPivot,deb,fin):
+  """
+  Segmente t[deb:fin] en utilisant t[iPivot] comme pivot
+  """
+  transpose(t, deb, iPivot) # On met le pivot en case deb
+
+  pivot=t[deb]
+  i=deb+1
+  j=fin
+
+  while i!=j:
+    # Invariant de boucle
+    # t[deb] contient le pivot
+    # les éléments de t[deb+1:i] sont ≤ pivot
+    # les éléments de t[i:j] sont > pivot
+    if t[i] <= pivot:
+      i+=1
+    else:
+      transpose(t,i,j-1)
+      j-=1
+    # Mettre le pivot a sa place
+
+# Pour le 15/10 : Faire le fonction triEntre et finir segmentation
