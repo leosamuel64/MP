@@ -532,9 +532,9 @@ def segmenteEntre(t,iPivot,deb,fin):
     else:
       transpose(t,i,j-1)
       j-=1
-    transpose(t,deb,i-1)
-    # Mettre le pivot a sa place
-    return i-1
+  transpose(t,deb,i-1)
+  # Mettre le pivot a sa place
+  return i-1
 
 
 def triEntre(t,deb,fin):
@@ -550,3 +550,77 @@ def triSegmentation(t):
 # triSegmentation([3,2,8,9,0,4,3,2,1,6,7,8,9,4,3,2,9])
 # print(t)
 
+# Exercice 15 : Calcul de médiane
+
+def iemeElement(T,i,deb,fin):
+  """
+  (i ∈ ⟦0, fin-deb⟦)
+  Renvoie le (i+1)-eme plus petit element
+  """
+  if deb-fin<1:
+    iPivot = segmenteEntre(T,i,deb,fin)
+    if i==iPivot:
+      return T[i]
+    elif i>iPivot:
+      return iemeElement(T,i,deb,iPivot)
+    else:
+      return iemeElement(T,i,iPivot+1,fin)
+      
+
+# print(iemeElement([1,2,5,6],2,0,4))
+
+def mediane(t):
+  return iemeElement(t,len(t)//2,0,len(t))
+
+# print(mediane([7,3,2,4,5,6,1]))
+
+def minimum(t):
+  return iemeElement(t,1,0,len(t))
+
+print(minimum([1,2,3,4,5,0]))
+
+
+# Cxt : au pire, si t est trié,
+# Alors à chaque appel on aura iPivot=deb.
+# iPivot=fin-1       On aura une relation de recurrence du type C(n)=C(n-1)+O(n)
+#  Soit O(n²)
+# dans le meilleur cas si le premier pivot est la mediane/minimum/maximum/ce que l'on veut... 
+# Cn=O(n) car premiere segmentation
+
+# Si a chaque segmentation, le tableau est à peu pres coupé en 2, C(n)=C( ⌞n/2⌟)+O(n)
+#                                                                     = O(n)
+     
+# Exercice 18 : Complexité moyenne du tri rapide
+
+# Cn = complexité moyenne pour un tableau à n élément 
+#    = E(nb de comparaison pour trié le tableau)
+
+#1-
+# C0= 0
+# C1= 0
+
+#2-
+# Complexité de la segmentation d'une plage de n éléments n-1 comparaison = O(n)
+
+#3-
+# Soit n ∈ ⟦2,+∞⟦
+# On segmente une plage de n éléments
+# ∀ i ∈ ⟦0,n⟦,
+# Soit A(i) : "le pivot arrive en position i"   
+# A0,A1,...,An est un systeme complet d'evenement
+
+# Soit X la variable aléatoire donnant le nombre de comparaison pour un tableau de taille n
+# On a E(Xn)=Σ(i)(E(Xn|Ai)*P(Ai)
+# En notant E(X|Ai)=Σ(v∈X(Ω))(v*P(X=v|Ai))
+
+# Or , dans le cas Ai, on  Effectue les deux appels recursifs:
+# [         ,i,            ]
+#     (i)         (n-i-1)
+
+# Sur des plages de tableau de longueur i et n-i-1 d'ou une complexité de
+# Cn=C(i)+C(n-i-1)+O(n)
+
+# Si on suppose toutes les permutations equiprobables, alors toutes les positions finales
+# du pivot sont équiprobable donc P(Ai)=1/n
+
+# D'où, 
