@@ -505,6 +505,10 @@ def triInsertionDicho(t):
 # - les éléments de t[deb+1:i] sont ≤ pivot
 # - les éléments de t[i:j] sont > pivot
 
+# Pour le 15/10 : Faire le fonction triEntre et finir segmentation
+
+
+
 def transpose(t,init,dest):
   t[init],t[dest]=t[dest],t[init]
 
@@ -532,18 +536,12 @@ def segmenteEntre(t,iPivot,deb,fin):
     # Mettre le pivot a sa place
     return i-1
 
-# Pour le 15/10 : Faire le fonction triEntre et finir segmentation
 
 def triEntre(t,deb,fin):
-    """ Procédure qui trie en place la partie de t d'indice dans [deb, fin[ """
-    if fin-deb>1:
-        iPivot=segmenteEntre(t,deb,deb,fin)
-        triEntre(t,deb,iPivot)
-        triEntre(t,iPivot+1,fin)
-
-# t=[1,3,2,4,3,6,5,8,9,6,7]
-# triEntre(t, 0,len(t))
-# print(t)
+  if fin-deb>1:
+    iPivot=segmenteEntre(t,deb,deb,fin)
+    triEntre(t,deb,iPivot)
+    triEntre(t,iPivot+1,fin)
 
 def triSegmentation(t):
   triEntre(t,0,len(t))
