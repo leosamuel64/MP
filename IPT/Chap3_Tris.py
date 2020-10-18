@@ -402,7 +402,7 @@ def nbInversion2(t):
     res3=nbInvDansFusion(t1,t2)
     return res1 + res2 + res3
   
-print(nbInversion2([4,1,3,2,0]))
+# print(nbInversion2([4,1,3,2,0]))
 
 
 # Exercice 13 : insertion dichotomique
@@ -577,7 +577,7 @@ def mediane(t):
 def minimum(t):
   return iemeElement(t,1,0,len(t))
 
-print(minimum([1,2,3,4,5,0]))
+# print(minimum([1,2,3,4,5,0]))
 
 
 # Cxt : au pire, si t est trié,
@@ -623,4 +623,50 @@ print(minimum([1,2,3,4,5,0]))
 # Si on suppose toutes les permutations equiprobables, alors toutes les positions finales
 # du pivot sont équiprobable donc P(Ai)=1/n
 
-# D'où, 
+#  Exercice 16 : dérécursifier le tri rapide
+def triEntre(t,deb,fin):
+  if fin-deb>1:
+    iPivot=segmenteEntre(t,deb,deb,fin)
+    triEntre(t,deb,iPivot)
+    triEntre(t,iPivot+1,fin)
+
+def triRapideNonRec(t):
+  deb=0
+  fin=len(t)
+  pile=[(deb,fin)]
+  trié=False
+
+  while pile!=[] and not(trié):
+    a,b=pile.pop()
+    
+    if a!=b:
+      ipivot=segmenteEntre(t,a,a,b)
+      pile.append((a,ipivot))
+      pile.append((ipivot+1,b))
+
+
+
+t=[1,3,2,7,6,5]
+triRapideNonRec(t)
+# print(t)
+
+import random  
+  
+def GrandeListe(n,trié=False):
+  res=[]
+  for i in range (n):
+    if trié:
+      res.append(i)
+    else:
+      res.append(random.randint(0,100))
+  return res
+
+import time
+
+a=GrandeListe(100000)
+print("done")
+
+
+deb=time.time()
+triRapideNonRec(a)
+print(time.time()-deb)
