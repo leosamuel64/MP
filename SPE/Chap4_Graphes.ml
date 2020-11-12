@@ -125,6 +125,154 @@ let miroir g=
   h
 ;;
 
+(* Entrée : un graphe (S,A) *)
+(* Sortie : le graphe (S,{(y,x) ; (x,y) ∈ A}) *)
+(* 
+Am <- {}
+
+(
+∀ (x,y) ∈ A, 
+  Rajouter (y,x) dans Am
+Renvoyer (S,Am)
+)
+
+Devient  :
+(
+∀ s ∈ S,                      (1)
+  ∀ t voisin de s,            (2)
+    Rajouter (t,s) dans Am
+Renvoyer (S,Am)
+)
+*)
+
+(* Etude de la complexité de miroir :
+Premiere boucle -> s'execute |S| fois
+Deuxième boucle -> s'execute |S| -1 fois dans le pire cas
+
+Complexité au pire : O(|S|²)
+
+En plus fin :
+On prend chaque ligne séparément et on étudie :
+1- Combien de fois elle est executée au total pendant l'execution de l'algo
+2- sa complexité
+
+n<- |S|                                 ->(O(1))
+res <- tab de n cases avec des []       ->(O(n))
+∀ s ∈ S:                                ->(O(n))
+    ∀ t ∈ g.(s)                         
+    res.(t) <- s::res.(t)               ->( ∀ (s,t) ∈ A : O(|A|))
+                                        Donc le cous est |A| * O(1) 
+                                        cad O(|A|) sur la boucle
+renvoyer le resultat                    ->(O(1))
+
+Total : Σ O(chaque ligne) = O(|S|) + O(|A|)
+*)
+
+(* Remarque : Place mémoire occupée par un graphe :  
+- Matrice d'adj : O(|S|²)
+- tableau de listes d'adj : total O(|S|+|A|) -> on appelle taille du graphe
+  - pour le tab : |S|
+  - pour les listes : |A|
+
+![GrapheExemple]()
+
+
+Le nombre |S|+|A| est appelé "taille du graphe"
+    *)
+
+let miroir2 g=
+  let n = Array.length g in 
+  let res = (Array.make n []) in
+
+  let rec parcoursVoisins s = function     (* (2) *)
+    (* Pour t dans l, on rajoute l'arête (t,s) dans res. Procedure *)
+  | [] -> ()
+  | t::q -> (* t est un sommet accessible depuis s *)
+            res.(t) <- s::(res.(t));
+            parcoursVoisins s q
+  in
+
+  for s=0 to n-1 do
+    parcoursVoisins s (g.(s))
+    done;
+  res
+;;
+
+let miroir3 g=
+  let n = Array.length g in 
+  let res = (Array.make n []) in
+
+  for s=0 to n-1 do
+    List.iter (fun t -> res.(t) <- s::(res.(t)))
+              g.(s) 
+    (* List.iter ne fonctionne que pour les procédures !! *)
+    done;
+  res
+;;
+
+
+
+(* 5 *)
+
+(* 
+Entrée : un graphe (S,A)
+Sortie : Rien
+Effet de bord : ∀ (s,t) ∈ A, rajoute (t,s) si elle n'y était pas dans A
+
+∀ s ∈ S,                      (1)
+  ∀ t voisin de s,            (2) 
+    Si (t,s) n'appartient pas à A        ( List.mem s g.(t)  )
+      Rajouter (t,s) dans A              ( g.(t) <- s::g.(t) )
+*)
+
+let desoriente g=
+  let n = Array.length g in 
+  let res = (Array.make n []) in
+
+  let rec parcoursVoisins s = function     (* (2) *)
+    (* Pour t dans l, on rajoute l'arête (t,s) dans res. Procedure *)
+  | [] -> ()
+  | t::q when not(List.mem s g.(t)) ->  g.(t) <- s::g.(t);
+                                        parcoursVoisins s q
+  | t::q -> parcoursVoisins s q
+  in
+
+  for s=0 to n-1 do
+    parcoursVoisins s (g.(s))
+    done;
+  res
+;;
+
+let desoriente2 g=
+  let n = Array.length g in 
+  let res = (Array.make n []) in
+  
+  for s=0 to n-1 do
+    List.iter (fun t -> if not(List.mem s g.(t)) then 
+                          res.(t) <- s::(res.(t)))
+              g.(s) 
+    (* List.iter ne fonctionne que pour les procédures !! *)
+    done;
+  res
+;;
+
+(* Pour le 16/11 : faire la 7 et la 8 *)
+(* Indication pour la 8):
+Entrée : Un graphe (S,A)
+Sortie : le puits total s'il existe
+
+n= |S|
+nb_aretes_entrantes <- Un tab de n case initialement à 0
+
+∀ s ∈ S:
+    ∀ t voisin de s:
+    Augmenter n_aretes_entrantes.(t) de 1
+    
+  (* En déduire le résultat ... *)
+
+
+  (* Et le programmer ... *)
+*)
 
 
 

@@ -61,6 +61,8 @@ let rec triSegmentation1 l=
             (triSegmentation1 l1)@(t::(triSegmentation1 l2))
 ;;
 
+let rec fibo n=
+  (*  *)
 
 triSegmentation1 [1;4;3;7;8;4;2;7;10;6] ;;
 
