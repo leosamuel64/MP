@@ -266,15 +266,72 @@ nb_aretes_entrantes <- Un tab de n case initialement à 0
 
 ∀ s ∈ S:
     ∀ t voisin de s:
-    Augmenter n_aretes_entrantes.(t) de 1
-    
-  (* En déduire le résultat ... *)
+      Augmenter n_aretes_entrantes.(t) de 1
 
+Si une n-1 est dans nb_aretes_entrantes, alors on verifie que que le sommet est un puis
+c'est alors un puits total sinon non
 
-  (* Et le programmer ... *)
 *)
 
+(* 
+Soit un graphe G=(S,G),
+On suppose que G possède deux puits totaux p1 et p2 tq p1≠p2.
 
+Or p1 est un puits total, alors :
+∀ s ∈ S, p1 est accessible depuis s 
+
+En particulier : p1 est accessible depuis p2
+Or p2 est un puits total alors il ne mène à aucun sommet.
+
+D'où la contradiction. Alors p1=p2.
+Un puits total s'il existe est unique.
+*)
+
+let aUnPuitsTotal g =
+  let n = Array.length g in
+  let nb_arretes_entrante = Array.make n 0 in
+  let rec voisins s = function
+    | [] -> ()
+    | t::q -> nb_arretes_entrante.(t)<-nb_arretes_entrante.(t)+1;
+              voisins s q
+  in
+  let aUnPuits2 g=
+    let puits = ref (-1) in
+    for i=0 to Array.length g-1 do
+      if g.(i)=[] then 
+        puits:=i
+    done;
+    !puits
+  in
+
+  for s=0 to n-1 do
+    voisins s g.(s);
+  done;
+  let puits = ref (-1) in
+   for i=0 to n-1 do
+    if nb_arretes_entrante.(i) = n-1 then
+      puits := i;
+   done;
+    
+    if !puits <> -1 && aUnPuits2 g = !puits then
+      (true,!puits)
+    else
+      (false,-1)
+  ;;
+
+
+
+
+let aUnPuits g=
+  let res = ref false in
+  for i=0 to Array.length g-1 do
+    if g.(i)=[] then
+      res:=true
+  done;
+  !res
+;;
+
+aUnPuits exemple_tab;;
 
 
 
