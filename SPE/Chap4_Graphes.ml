@@ -161,7 +161,7 @@ res <- tab de n cases avec des []       ->(O(n))
 ∀ s ∈ S:                                ->(O(n))
     ∀ t ∈ g.(s)                         
     res.(t) <- s::res.(t)               ->( ∀ (s,t) ∈ A : O(|A|))
-                                        Donc le cous est |A| * O(1) 
+                                        Donc le cout est |A| * O(1) 
                                         cad O(|A|) sur la boucle
 renvoyer le resultat                    ->(O(1))
 
@@ -403,3 +403,4 @@ let matriceAleatoireNonOriente n=
 ;;
 
 matriceAleatoireNonOriente 4;;
+
