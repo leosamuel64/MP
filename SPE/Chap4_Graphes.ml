@@ -295,25 +295,17 @@ let aUnPuitsTotal g =
     | t::q -> nb_arretes_entrante.(t)<-nb_arretes_entrante.(t)+1;
               voisins s q
   in
-  let aUnPuits2 g=
-    let puits = ref (-1) in
-    for i=0 to Array.length g-1 do
-      if g.(i)=[] then 
-        puits:=i
-    done;
-    !puits
-  in
-
   for s=0 to n-1 do
     voisins s g.(s);
   done;
+
   let puits = ref (-1) in
    for i=0 to n-1 do
-    if nb_arretes_entrante.(i) = n-1 then
+    if nb_arretes_entrante.(i) = n-1 && g.(i)=[] then
       puits := i;
    done;
-    
-    if !puits <> -1 && aUnPuits2 g = !puits then
+
+    if !puits <> -1 then
       (true,!puits)
     else
       (false,-1)
@@ -404,3 +396,42 @@ let matriceAleatoireNonOriente n=
 
 matriceAleatoireNonOriente 4;;
 
+let chemin_entre sd sa g=
+  let n= Array.length g in
+  let chemin = Array.make n [] in 
+  let a_Visiter= Queue.create () in
+  let deja_vu= Array.make n false in
+
+  Queue.add sd a_Visiter; 
+  chemin.(sd)<-[sd];
+
+  let rec visite_voisins s l=
+    match l with 
+    | [] -> ()
+    | t::q when chemin.(t) = []->  Queue.add t a_Visiter;
+                                    chemin.(t)<- t::chemin.(s);
+                                    visite_voisins s q
+    | t::q -> visite_voisins s q
+    in
+  while  not (Queue.is_empty a_Visiter) && chemin.(sa)=[] do
+    let s= Queue.take a_Visiter in
+    if not (deja_vu.(s)) then
+    (
+      visite_voisins s g.(s);
+      deja_vu.(s) <- true;
+    )
+
+  done;
+  List.rev chemin.(sa)
+  ;;
+
+let exemple_tab = [|[1];[2];[3];[0]|];;
+
+let testTab = [|[1;2];[3;4;5];[6];[4];[];[];[0]|];;
+
+let pasConnexe = [|[1];[2];[];[4];[]|];;
+
+chemin_entre 0 2 testTab;;
+
+
+(* Pour Lundi 23/11 : Exercice 10*)
