@@ -433,5 +433,70 @@ let pasConnexe = [|[1];[2];[];[4];[]|];;
 
 chemin_entre 0 2 testTab;;
 
+let plus_court_chemin_entre sd sa g=
+  let n= Array.length g in
+  let chemin = Array.make n [] in 
+  let dist = Array.make n (-1) in
+  let a_Visiter= Queue.create () in
+  let deja_vu= Array.make n false in
+
+  Queue.add sd a_Visiter; 
+  chemin.(sd)<-[sd];
+
+  let rec visite_voisins s l=
+    match l with 
+    | [] -> ()
+    | t::q when dist.(t)=(-1) ->   Queue.add t a_Visiter;
+                                    dist.(t)<- dist.(s)+1;
+                                    chemin.(t)<- t::chemin.(s);
+                                    visite_voisins s q
+    | t::q -> visite_voisins s q
+    in
+  while  not (Queue.is_empty a_Visiter) && chemin.(sa)=[] do
+    let s= Queue.take a_Visiter in
+    if not (deja_vu.(s)) then
+    (
+      visite_voisins s g.(s);
+      deja_vu.(s) <- true;
+    )
+
+  done;
+  List.rev chemin.(sa)
+  ;;
 
 (* Pour Lundi 23/11 : Exercice 10*)
+
+(* Exercice 10 *)
+
+(* 1 *)
+
+
+
+let sphere g s d =
+  let res = ref []
+  and n = Array.length g in
+  for i=0 to n-1 do
+    let dist = (List.length (plus_court_chemin_entre s i g))-1 in
+    if dist = d then
+      res:= i::(!res);
+  done;
+  !res
+;;
+
+let distanceTab = [|[];[2;3;4];[5;6];[0];[7];[];[];[8];[]|];;
+
+sphere distanceTab 1 2;;
+
+let bouleFerme g s d =
+  let res = ref []
+  and n = Array.length g in
+  for i=0 to n-1 do
+    let dist = (List.length (plus_court_chemin_entre s i g))-1 in
+    if dist <= d then
+      res:= i::(!res);
+  done;
+  !res
+;;
+
+bouleFerme distanceTab 1 2;;
+
