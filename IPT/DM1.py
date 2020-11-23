@@ -13,8 +13,9 @@ def fusionEntre(t, deb, m, fin):
             j+=1
     res.extend(t[i:m])
 
-    for k in range(len(res)):
+    for k in range(len(res)):           # On peut aussi faire t[deb:j] = res
         t[deb+k]=res[k]
+    
 
 t = [1,2,3,2,3,4,5,6]
 fusionEntre(t,0,3,5)
@@ -22,7 +23,6 @@ fusionEntre(t,0,3,5)
 
 
 def cherche_a(t, deb, fin, x):
-
     d, f = deb, fin
     while d < f:
         m=(d+f)//2
@@ -42,13 +42,25 @@ def cherche_b(t, deb, fin, x):
         else:
             return cherche_a(t, m, fin, x)
 
+def dicho_gauche(t, deb, m):
+    def aux(d, f):
+        if d==f:
+            return d
+        else:
+            milieu=(d+f)//2
+            if t[milieu]<=t[m]:
+                return aux(milieu, f)
+            else:
+                return aux(d, milieu)
+
+
 def fusionOpti(t, deb, m, fin):
     a= cherche_a(t, deb, m, t[m])
     b= cherche_b(t, m-1, fin-1, t[m-1])
 
     fusionEntre(t, a
                  , m
-                 , b+1 # Attention ici
+                 , b+1 
                  )
 
 t = [1,2,3,2,3,4,5,6]
