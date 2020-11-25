@@ -487,7 +487,7 @@ let distanceTab = [|[];[2;3;4];[5;6];[0];[7];[];[];[8];[]|];;
 
 sphere distanceTab 1 2;;
 
-let bouleFerme g s d =
+let boule g s d =
   let res = ref []
   and n = Array.length g in
   for i=0 to n-1 do
@@ -498,5 +498,53 @@ let bouleFerme g s d =
   !res
 ;;
 
-bouleFerme distanceTab 1 2;;
+boule distanceTab 1 2;;
+
+
+
+(* Exercice 6 *)
+
+let composante_connexe g sd=
+  let n= Array.length g in
+  let deja_vu= Array.make n false in
+  let a_Visiter= Queue.create () in
+  Queue.add sd a_Visiter; 
+  let rec visite_voisins = function
+    | [] -> ()
+    | t::q -> Queue.add t a_Visiter;
+              visite_voisins q
+  in
+  while  not (Queue.is_empty a_Visiter) do
+    let s= Queue.take a_Visiter in
+    if not (deja_vu.(s)) then
+    (
+      visite_voisins g.(s);
+      deja_vu.(s) <- true;
+    )
+  done;
+  (* Maintenant, la composante connexe de sd correspond aux sommetsde deja_vu *)
+  let res = ref [] in
+  for i=0 to n-1 do
+    if deja_vu.(i) then 
+      res:= i::(!res)
+  done;
+  !res
+  ;;
+
+
+
+let composantes_connexes g=
+  let n = Array.length g in
+  let res = ref [] in
+  for s=0 to n-1 do
+    res:=(composante_connexe g s)::!res;
+  done;
+  List.rev !res;
+;;
+
+let testTab = [|[1;2];[3;4;5];[6];[4];[];[];[0]|];;
+
+composantes_connexes testTab;;
+
+composante_connexe testTab 1;;
 
