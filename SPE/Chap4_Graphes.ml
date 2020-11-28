@@ -504,47 +504,156 @@ boule distanceTab 1 2;;
 
 (* Exercice 6 *)
 
-let composante_connexe g sd=
+let composantes_connexes g=
+  
   let n= Array.length g in
   let deja_vu= Array.make n false in
-  let a_Visiter= Queue.create () in
-  Queue.add sd a_Visiter; 
-  let rec visite_voisins = function
-    | [] -> ()
-    | t::q -> Queue.add t a_Visiter;
-              visite_voisins q
+  
+  let composante_connexe g sd =
+    let a_Visiter= Queue.create () in
+    let cc = ref [] in
+    Queue.add sd a_Visiter; 
+    let rec visite_voisins = function
+      | [] -> ()
+      | t::q -> Queue.add t a_Visiter;
+                visite_voisins q
+    in
+    while  not (Queue.is_empty a_Visiter) do
+      let s= Queue.take a_Visiter in
+      if not (deja_vu.(s)) then
+      (
+        cc:=s::!cc;
+        visite_voisins g.(s);
+        deja_vu.(s) <- true;
+      )
+    done;
+    !cc
+    (* Maintenant, la composante connexe de sd correspond aux sommetsde deja_vu *)
   in
-  while  not (Queue.is_empty a_Visiter) do
-    let s= Queue.take a_Visiter in
-    if not (deja_vu.(s)) then
-    (
-      visite_voisins g.(s);
-      deja_vu.(s) <- true;
-    )
-  done;
-  (* Maintenant, la composante connexe de sd correspond aux sommetsde deja_vu *)
   let res = ref [] in
   for i=0 to n-1 do
-    if deja_vu.(i) then 
-      res:= i::(!res)
+    if not(deja_vu.(i)) then
+      res:=(composante_connexe g i)::!res
   done;
   !res
   ;;
 
+    
+  
+  
 
-
-let composantes_connexes g=
-  let n = Array.length g in
-  let res = ref [] in
-  for s=0 to n-1 do
-    res:=(composante_connexe g s)::!res;
-  done;
-  List.rev !res;
-;;
 
 let testTab = [|[1;2];[3;4;5];[6];[4];[];[];[0]|];;
 
 composantes_connexes testTab;;
 
-composante_connexe testTab 1;;
 
+
+
+type 'a arbre = Noeud of 'a * ('a arbre) list;; 
+
+let arbre_exemple=
+  Noeud(2,[
+    Noeud(3,[
+      Noeud(4,[]);
+      Noeud(5,[])
+    ]);
+    Noeud(-1,[]);
+    Noeud(5,[])
+  ]);;
+
+
+
+
+let rec somme = function
+  | Noeud(e,fils) -> e + somme_foret fils
+and somme_foret = function
+  | [] -> 0
+  | t::q -> (somme t)+somme_foret(q)
+;;
+    
+somme arbre_exemple;;
+
+let rec etiquettes_arbre = function
+  | Noeud(e,fils)-> e::(etiquettes_foret fils)
+and etiquettes_foret = function
+  | [] -> []
+  | t::q -> etiquettes_arbre(t)@(etiquettes_foret q)
+;;
+
+etiquettes_arbre arbre_exemple;;
+
+
+(* Exercice 5 *)
+
+(* 1- *)
+(* 
+Parcours : C'est un parcours en largeur (file)
+But : Determiner  si le graphe est "fortement" connexe depuis s_0
+Variable :
+F -> file (aVisiter) [contient des sommets gris]
+b -> bool Array (deja_vu) [Donne les sommets noirs, ceux qui étaient dans la file mais qui n'y sont plus]
+π -> (int list) Array
+s -> int
+*)
+
+(* 2- *)
+(* 
+Parcours : Parcours en largeur (file)
+But : on récupère les pages accessibles en n pas/étape
+*)
+
+(* 3- *)
+(* Parcours : parcours en largeur 
+But : on récupère les pages accessibles en n pas/étape
+*)
+
+(* 4- *)
+(* 
+Parcours : 
+But : 
+*)
+
+
+
+
+
+
+
+
+
+let parcours_prof g sd =
+  let n = Array.length g in
+  let deja_vu = Array.make n false in
+
+  let rec visite_sommet s=
+    deja_vu.(s) <- true;
+    (* Faire quelque chose avec s... *)
+    visite_voisins s g.(s)
+  and visite_voisins s= function
+    | [] -> (* Renvoyer quelque chose *)
+    | t::autre_Voisin when not(deja.(t)) -> (* Renvoyer quelque chose avec visite_sommet et visite_voisins *)
+    | t::autre_Voisin -> visite_voisins autre_Voisin
+
+  in visite_sommet sd
+;;
+
+let composante_connexe_rec g sd=
+  let n = Array.length g in
+  let deja_vu = Array.make n false in
+
+  let rec visite_sommet s=
+    deja_vu.(s) <- true;
+    s::(visite_voisins g.(s))
+  and visite_voisins = function
+    | [] -> []
+    | t::autres_Voisins when not(deja_vu.(t)) -> (visite_sommet t)@(visite_voisins autres_Voisins)
+    | t::autres_Voisins -> visite_voisins autres_Voisins
+
+  in visite_sommet sd
+;;
+
+composante_connexe_rec testTab 2;;
+
+
+(* Pour le 3/12 : Exercice 11 (en DM) *)
