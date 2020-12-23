@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nc}{Cr}\PYG{err}{é}\PYG{n}{er} \PYG{l+m+mi}{3} \PYG{n}{ensembles} \PYG{o}{\PYGZdl{}}\PYG{n+nc}{N}\PYG{o}{\PYGZdl{},\PYGZdl{}}\PYG{n+nc}{G}\PYG{o}{\PYGZdl{}} \PYG{n}{et} \PYG{o}{\PYGZdl{}}\PYG{n+nc}{B}\PYG{o}{\PYGZdl{}}
+\PYG{o}{\PYGZdl{}}\PYG{n+nc}{N}\PYG{o}{\PYGZdl{}} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{un} \PYG{n}{tab} \PYG{n}{de} \PYG{o}{|}\PYG{n+nc}{S}\PYG{o}{|} \PYG{k+kt}{bool} \PYG{n}{initialement} \PYG{n}{faux}
+\PYG{n}{aVisiter} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n+nc}{Une} \PYG{n}{structure} \PYG{n}{contenant} \PYG{n}{initialement} \PYG{o}{\PYGZdl{}}\PYG{n}{s\PYGZus{}d}\PYG{o}{\PYGZdl{}}
+\PYG{n+nc}{Peindre} \PYG{o}{\PYGZdl{}}\PYG{n}{s\PYGZus{}d}\PYG{o}{\PYGZdl{}} \PYG{n}{en} \PYG{n}{gris}
+\PYG{n+nc}{Tant} \PYG{n}{que} \PYG{o}{\PYGZdl{}}\PYG{n+nc}{G} \PYG{err}{\PYGZbs{}}\PYG{n}{not}\PYG{o}{=} \PYG{err}{\PYGZbs{}}\PYG{n}{emptyset}\PYG{o}{\PYGZdl{}:}
+    \PYG{n}{extraire} \PYG{n}{un} \PYG{n}{sommet} \PYG{o}{\PYGZdl{}}\PYG{n}{s}\PYG{o}{\PYGZdl{}} \PYG{n}{de} \PYG{n+nc}{Avisiter}
+    \PYG{n+nc}{Si} \PYG{n+nc}{Non} \PYG{n+nn}{N}\PYG{p}{.}\PYG{o}{(}\PYG{n}{s}\PYG{o}{):}
+        \PYG{n+nc}{Faire} \PYG{n}{quelque} \PYG{n}{chose}
+        \PYG{n+nc}{Peindre} \PYG{o}{\PYGZdl{}}\PYG{n}{s}\PYG{o}{\PYGZdl{}} \PYG{n}{en} \PYG{n}{noir}
+        \PYG{o}{\PYGZdl{}}\PYG{err}{\PYGZbs{}}\PYG{n}{forall} \PYG{n}{t}\PYG{o}{\PYGZdl{}} \PYG{n}{voisin} \PYG{n}{de} \PYG{o}{\PYGZdl{}}\PYG{n}{s}\PYG{o}{\PYGZdl{}:}
+            \PYG{n+nc}{Si} \PYG{n+nc}{NON} \PYG{n+nn}{N}\PYG{p}{.}\PYG{o}{(}\PYG{n}{t}\PYG{o}{):}
+                \PYG{n+nc}{Mettre} \PYG{n}{t} \PYG{n}{dans} \PYG{n}{aVisiter}
+\PYG{n+nc}{Renvoyer} \PYG{n}{le} \PYG{n}{resultat}
+\end{Verbatim}

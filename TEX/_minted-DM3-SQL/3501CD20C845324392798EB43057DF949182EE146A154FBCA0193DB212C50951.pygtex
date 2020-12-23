@@ -1,0 +1,16 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{SELECT} \PYG{n}{annee}\PYG{p}{,}\PYG{k}{SUM}\PYG{p}{(}\PYG{n}{QuantiteLievre}\PYG{p}{)} \PYG{k}{AS} \PYG{n}{PeauxLievre}\PYG{p}{,}\PYG{k}{SUM}\PYG{p}{(}\PYG{n}{QuantiteLynx}\PYG{p}{)} \PYG{k}{AS} \PYG{n}{PeauxLynx}
+\PYG{k}{FROM}\PYG{p}{(}
+        \PYG{k}{SELECT} \PYG{n}{annee}\PYG{p}{,} \PYG{k}{SUM}\PYG{p}{(}\PYG{n}{nbPeaux}\PYG{p}{)} \PYG{k}{AS} \PYG{n}{QuantiteLievre}\PYG{p}{,}\PYG{l+m+mi}{0} \PYG{k}{AS} \PYG{n}{QuantiteLynx}
+        \PYG{k}{from} \PYG{n}{Achats}
+        \PYG{k}{WHERE} \PYG{n}{espece} \PYG{o}{=} \PYG{l+s+ss}{\PYGZdq{}lievre\PYGZdq{}}
+        \PYG{k}{GROUP} \PYG{k}{BY} \PYG{n}{annee}
+
+        \PYG{k}{UNION}
+
+        \PYG{k}{SELECT} \PYG{n}{annee}\PYG{p}{,} \PYG{l+m+mi}{0} \PYG{k}{AS} \PYG{n}{QuantiteLievre}\PYG{p}{,}\PYG{k}{SUM}\PYG{p}{(}\PYG{n}{nbPeaux}\PYG{p}{)} \PYG{k}{AS} \PYG{n}{QuantiteLynx}
+        \PYG{k}{from} \PYG{n}{Achats}
+        \PYG{k}{WHERE} \PYG{n}{espece} \PYG{o}{=} \PYG{l+s+ss}{\PYGZdq{}lynx\PYGZdq{}}
+        \PYG{k}{GROUP} \PYG{k}{BY} \PYG{n}{annee}
+\PYG{p}{)} \PYG{k}{group} \PYG{k}{by} \PYG{n}{annee}
+\end{Verbatim}

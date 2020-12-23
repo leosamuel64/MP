@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{SELECT} \PYG{n}{ville}
+\PYG{k}{FROM} \PYG{n}{Postes}
+\PYG{k}{WHERE} \PYG{n}{region} \PYG{o}{=} \PYG{l+s+ss}{\PYGZdq{}Québec\PYGZdq{}}
+\end{Verbatim}

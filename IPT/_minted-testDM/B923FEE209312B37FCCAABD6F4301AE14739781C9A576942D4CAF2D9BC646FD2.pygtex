@@ -1,0 +1,28 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{let} \PYG{n}{composante\PYGZus{}connexe\PYGZus{}profondeur} \PYG{n}{g} \PYG{n}{sd}\PYG{o}{=}
+\PYG{k}{let} \PYG{n}{n}\PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{length} \PYG{n}{g} \PYG{k}{in}
+\PYG{k}{let} \PYG{n}{deja\PYGZus{}vu}\PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{make} \PYG{n}{n} \PYG{n+nb+bp}{false} \PYG{k}{in}
+\PYG{k}{let} \PYG{n}{a\PYGZus{}Visiter}\PYG{o}{=} \PYG{n+nn}{Stack}\PYG{p}{.}\PYG{n}{create} \PYG{n+nb+bp}{()} \PYG{k}{in}
+\PYG{n+nn}{Stack}\PYG{p}{.}\PYG{n}{push} \PYG{n}{sd} \PYG{n}{a\PYGZus{}Visiter}\PYG{o}{;}
+\PYG{k}{let} \PYG{k}{rec} \PYG{n}{visite\PYGZus{}voisins} \PYG{o}{=} \PYG{k}{function}
+    \PYG{o}{|} \PYG{n+nb+bp}{[]} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb+bp}{()}
+    \PYG{o}{|} \PYG{n}{t}\PYG{o}{::}\PYG{n}{q} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nn}{Stack}\PYG{p}{.}\PYG{n}{push} \PYG{n}{t} \PYG{n}{a\PYGZus{}Visiter}\PYG{o}{;}
+            \PYG{n}{visite\PYGZus{}voisins} \PYG{n}{q}
+\PYG{k}{in}
+\PYG{k}{while}  \PYG{n}{not} \PYG{o}{(}\PYG{n+nn}{Stack}\PYG{p}{.}\PYG{n}{is\PYGZus{}empty} \PYG{n}{a\PYGZus{}Visiter}\PYG{o}{)} \PYG{k}{do}
+    \PYG{k}{let} \PYG{n}{s}\PYG{o}{=} \PYG{n+nn}{Stack}\PYG{p}{.}\PYG{n}{pop} \PYG{n}{a\PYGZus{}Visiter} \PYG{k}{in}
+    \PYG{k}{if} \PYG{n}{not} \PYG{o}{(}\PYG{n}{deja\PYGZus{}vu}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{))} \PYG{k}{then}
+    \PYG{o}{(}
+    \PYG{n}{visite\PYGZus{}voisins} \PYG{n}{g}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{);}
+    \PYG{n}{deja\PYGZus{}vu}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n+nb+bp}{true}\PYG{o}{;}
+    \PYG{o}{)}
+\PYG{k}{done}\PYG{o}{;}
+\PYG{c}{(* Maintenant, la composante connexe de sd correspond aux sommetsde deja\PYGZus{}vu *)}
+\PYG{k}{let} \PYG{n}{res} \PYG{o}{=} \PYG{n}{ref} \PYG{n+nb+bp}{[]} \PYG{k}{in}
+\PYG{k}{for} \PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+    \PYG{k}{if} \PYG{n}{deja\PYGZus{}vu}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{)} \PYG{k}{then}
+    \PYG{n}{res}\PYG{o}{:=} \PYG{n}{i}\PYG{o}{::(!}\PYG{n}{res}\PYG{o}{)}
+\PYG{k}{done}\PYG{o}{;}
+\PYG{o}{!}\PYG{n}{res}
+\PYG{o}{;;}
+\end{Verbatim}

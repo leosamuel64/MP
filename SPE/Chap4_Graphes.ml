@@ -593,7 +593,7 @@ But : Determiner  si le graphe est "fortement" connexe depuis s_0
 Variable :
 F -> file (aVisiter) [contient des sommets gris]
 b -> bool Array (deja_vu) [Donne les sommets noirs, ceux qui étaient dans la file mais qui n'y sont plus]
-π -> (int list) Array
+π -> (int list) Array -> liste des sommets parents
 s -> int
 *)
 
@@ -613,12 +613,6 @@ But : on récupère les pages accessibles en n pas/étape
 Parcours : 
 But : 
 *)
-
-
-
-
-
-
 
 
 
@@ -657,3 +651,281 @@ composante_connexe_rec testTab 2;;
 
 
 (* Pour le 3/12 : Exercice 11 (en DM) *)
+
+(* Exercice 10 *)
+
+(* -3 *)
+
+(* En utilisant un algo récursif *)
+
+let sommets_accessible_en n g sd=
+  let n = Array.length g in
+  let deja_vu = Array.make n false in
+
+  let rec visite_sommet n s=
+    deja_vu.(s) <- true;
+    s::(visite_voisins g.(s))
+  and visite_voisins n = function
+    | [] -> []
+    | t::autre_Voisin when not(deja_vu.(t)) -> (visite_sommet (n+1) t)@(visite_voisins n autre_Voisin)
+    | t::autre_Voisin -> visite_voisins n autre_Voisin
+
+  in visite_sommet sd
+;;
+
+let sommets_accessible_en_n_aretes g n sd=
+  let rec visite_sommet s i=
+    if i=0 then 
+      [s] 
+    else
+      (visite_voisins i g.(s))
+
+  and visite_voisins i = function
+  | [] -> []
+  | t::autres_Voisins -> (visite_sommet t (i-1))@(visite_voisins i autres_Voisins)
+
+  in
+  visite_sommet sd n
+;;
+
+sommets_accessible_en_n_aretes testTab 2 0;;
+
+
+(* Exercice 12 *)
+
+let aCycle g =
+  let n = Array.length g in
+  let deja_vu = Array.make n false in
+  
+  let rec visite_sommet s sprec=
+      if deja_vu.(s) then true
+      else 
+      (
+          deja_vu.(s) <- true;
+          visite_voisins s sprec g.(s)
+      )
+  and visite_voisins s sprec= function
+      | [] -> false
+      | t::autres_voisins when t<>sprec -> (visite_sommet t s) || (visite_voisins s sprec autres_voisins)
+      | t::autres_voisins -> (visite_voisins s sprec autres_voisins)
+  
+  in
+  List.exists (fun s -> visite_sommet s 0) g.(0)
+  ;;
+
+let arbreTest = [|[1;2];[3;4;0];[5;0];[6;7;8;1];[1];[2];[3];[3];[3]|];;
+let testTab = [|[1;2];[3;4;5];[6];[4];[];[];[0]|];;
+
+aCycle testTab;;
+
+let exemple_matrice = [|[|0.;1.;infinity;4.;infinity|];
+                        [|1.;0.;1.;infinity;infinity|];
+                        [|infinity;1.;0.;1.;3.|];
+                        [|4.;infinity;1.;0.;1.|];
+                        [|infinity;infinity;2.;1.;0.|]        
+                      |];;
+                      
+let exemple_liste = [|
+                        [(1,1.);(3,4.)];
+                        [(0,1.);(2,1.)];
+                        [(1,1.);(3,1.);(4,3.)];
+                        [(0,4.);(2,1.);(4,1.)];
+                        [(3,1.);(2,2.)]
+                    |];;
+
+let copie_mat m=
+  let n,p = Array.length m,Array.length m.(0) in
+  let res = Array.make_matrix n p m.(0).(0) in
+
+  for i=0 to n-1 do
+    for j=0 to p-1 do
+      res.(i).(j)<-m.(i).(j);
+    done;
+  done;
+  res
+;;
+
+copie_mat exemple_matrice;;
+
+let floyd_warshall m=
+  (* Entrée : m matrice d'adjacence d'un graphe pondéré G *)
+  let n = Array.length m in
+  let dist = copie_mat m in
+  for k=0 to n-1 do
+    (* Ici dist contient les d_{i,j}^{k} *)
+    let sauv = copie_mat dist in
+    for i=0 to n-1 do
+      for j=0 to n-1 do
+        dist.(i).(j) <- min (sauv.(i).(j)) (sauv.(i).(k)+.sauv.(k).(j));
+      done;
+    done;
+    (* Maintenant, dist contient les d_{i,j}^{k+1} *)
+  done;
+  dist
+;;
+
+floyd_warshall exemple_matrice;;
+
+(* Calculer le chemin entre deux points. Faire une mat chemin qui sera une matrice de liste *)
+
+
+let floyd_warshall_chemin m sd sa=
+	(* Renvoie, s'il en existe, un chemin entre deux sommets et [] sinon *)
+	let n = Array.length m in
+	let chemin = Array.make_matrix n n [] in
+  let dist = copie_mat m in
+  (* Init *)
+  for i=0 to n-1 do
+    for j=0 to n-1 do
+      chemin.(i).(j) <- [i];
+    done;
+  done;
+	for k=0 to n-1 do
+		let sauv = copie_mat dist in
+		for i=0 to n-1 do
+			for j=0 to n-1 do
+				if (sauv.(i).(k) +. sauv.(k).(j)) < dist.(i).(j) then
+					(
+					dist.(i).(j) <- sauv.(i).(k) +. sauv.(k).(j);
+					chemin.(i).(j) <- chemin.(i).(k)@chemin.(k).(j);
+          )
+			done;
+		done;
+	done;
+  chemin.(sd).(sa)@[sa]
+;;
+
+floyd_warshall_chemin exemple_matrice 1 4;;
+
+let rec pcc pred sd sa=
+    if sd = sa then
+      [sd]
+    else
+      sa::(pcc pred sd pred.(sd).(sa))
+      
+;;
+    
+
+let floyd_warshall_chemin2 m sd sa=
+  let n = Array.length m in
+  let pred = Array.make_matrix n n (-1) in
+  let dist = copie_mat m in
+  (* Init *)
+  for i=0 to n-1 do
+    for j=0 to n-1 do
+      if m.(i).(j) <> infinity && i<>j then
+        pred.(i).(j) <- i;
+    done;
+  done;
+	for k=0 to n-1 do
+		let sauv = copie_mat dist in
+		for i=0 to n-1 do
+			for j=0 to n-1 dor
+				if (sauv.(i).(k) +. sauv.(k).(j)) < dist.(i).(j) then
+					(
+					dist.(i).(j) <- sauv.(i).(k) +. sauv.(k).(j);
+					pred.(i).(j) <- pred.(k).(j);
+          )
+			done;
+		done;
+	done;
+List.rev (pcc pred sd sa)
+;;
+
+floyd_warshall_chemin2 exemple_matrice 0 4;;
+
+
+
+(* BIBLIO TAS *)
+
+type 'a arbre = Vide | Noeud of ('a arbre * 'a * 'a arbre) ;;
+
+let estUnTas a=
+  let rec aux a xprec=
+    match a with
+    | Vide -> true
+    | Noeud(fg,x,fd) when xprec >= x -> aux fg x && aux fd x
+    | _ -> false
+    in 
+      match a with
+      | Vide -> true
+      | Noeud(fg,e,fd) -> aux fg e && aux fd e
+;;
+
+let maxi = function
+  | Vide -> failwith "Erreur : Tas vide"
+  | Noeud(_,e,_) -> e
+;;
+
+let rec insertion x t=
+  match t with
+  | Vide -> Noeud(Vide,x,Vide)
+  | Noeud(fg,e,fd) when x>e ->  Noeud(fd,x,insertion e fg) (* x est le nouveau max du tas *) 
+  | Noeud(fg,e,fd) -> Noeud(fd,e,insertion x fg)
+;;
+
+let rec tas_of_list = function
+  | [] -> Vide
+  | t::q -> insertion t (tas_of_list q)
+;;
+
+let rec rassemble t1 t2=
+  match t1,t2 with
+  | Vide , _ -> t2
+  | _ , Vide -> t1
+  | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) when e1 <= e2 -> Noeud(t1,e2,rassemble fg2 fd2)
+  | Noeud(fg1,e1,fd1), Noeud(fg2,e2,fd2) -> Noeud(rassemble fg1 fd1,e1,t2)
+;;
+
+let max_extrait = function
+ | Vide -> failwith "Erreur : Tas Vide"
+ | Noeud(fg,m,fd) -> m, rassemble fg fd
+;;
+
+let triParTas l=
+  let rec aux t=
+    match t with
+    | Vide -> []
+    | _ -> let max,suitetas = max_extrait t in 
+                      max::(aux suitetas)
+  in aux (tas_of_list l)
+;;
+
+(* FIN BIBLIO TAS *)
+
+let dijkstra g sd sa=
+  let n = Array.length g in
+  let dejaVu = Array.make n false
+  and dist = Array.make n infinity in
+
+  let rec boucle_principale aVisiter =
+    (* aVsiter est un tas de couple (-dist.(s) au moment où s a été entasser, s) *)
+    if (aVisiter=Vide) || dejaVu.(sa) then
+      dist.(sa)
+    else
+      (
+      let (_,s), suiteAvisiter = max_extrait aVisiter in
+      if not dejaVu.(s) then
+        (
+        dejaVu.(s)<-true;
+        parcours_voisins s aVisiter g.(s);
+        )
+      else
+        boucle_principale suiteAvisiter
+      )
+
+  and parcours_voisins s aVisiter = function
+    | [] -> boucle_principale aVisiter
+    | (t,lst)::autres when dist.(t) > dist.(s) +. lst -> dist.(t)<-dist.(s) +. lst;
+                                        parcours_voisins s (insertion (-.dist.(s) -. lst, t) aVisiter) autres
+
+    | (t,lst)::autres -> parcours_voisins s aVisiter autres
+  in
+
+  (* initialisation *)
+  dist.(sd) <- 0.;
+  boucle_principale (insertion (0.,sd) Vide)
+  ;;
+
+dijkstra exemple_liste 0 4;;
+

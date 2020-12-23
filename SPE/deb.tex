@@ -1,0 +1,351 @@
+
+\begin{document}
+    
+    \maketitle
+
+\section{Vocabulaire}
+
+Un graphe est formé de :
+\begin{itemize}
+\item un ensemble, appelé ensemble des sommets (Noté $S$ ou $V$)
+\item un sous-ensemble de $S^2$, appelé ensemble des arrêtes (Noté $E$)
+\end{itemize}
+
+\begin{ex}
+$S={1,2,3,4}$ et $A={(1,2),(1,3),(2,1)}$ Alors $(S,A)$ est un graphe.  
+Représentation graphique :
+\end{ex}
+
+Soit $k=(S,A)$ un graphe.  
+\begin{itemize}
+\item Un chemin est une suite $(s_0,...,s_n) \in S^{n+1}$ tq $\forall i \in \llbracket 0,n\llbracket , (s_i,s_{i+1}\in A$  
+\item Deux sommet $s$,$t$ $\in S^n$ sont dits reliés lorsqu'il existe un chemin de $s$ à $t$.
+\item La longueur d'un chemin est le nombre d'arretes empruntées
+\item $\forall (s,t)) \in S^2)$ deux sommets reliés. On note $d(s,t)$ la longueur du plus court chemin de $s$ à $t$.
+\item On dit que $G$ est non orienté lorsque $\forall (s,t) \in S^2, (s,t) \in A \equiv (t,s) \in A$.  
+\item Supposons G non-orienté
+    \begin{itemize}
+    \item on dit que G est connexe lorsque tous ses sommets sont reliés
+    \item $\forall s \in S$, on appelle composant connexe de $s$ l'ensemble des sommets accessible depuis $s$
+    \end{itemize}
+\end{itemize}
+
+\begin{prop}
+Supp G connexe et non orienté. La distance vérifie :
+\begin{itemize}
+\item $\forall (s,t) \in S^2, d(s,t)=d(t,s)$
+\item $\forall (s,t,u) \in S^3, d(s,t) \leq d(s,u) + d(u,t)$ (Inégalité triangulaire)
+\item $\forall (s,t) \in S^2, d(s,t)=0 \equiv s=t$
+\item si $G$ est orienté, les deux derniers points restent valides
+
+Si $G$ n'est pas connexe, on pose $\forall (s,t) \in S^2$ non connectés : $d(s,t)=+\infty$  
+\end{prop}
+
+\begin{dem}
+Soit $(s,t) \in S^2$, notons $a=d(s,t)$ et $b=d(t,s)$. Montrons que $a=b$.\\
+Soit $\gamma$ un plus court chemin de $s$ à $t$. Il est de longueur a. Soit $s_o,...,s_a$ les sommets traversé par $\gamma$.\\
+
+$(s_a,s_{a-1},...,s_o)$ est aussi un chemin. Notons le $\gamma^T$. Sa longueur est $a$.  \\
+Donc il existe un chemin de longueur $a$ de $t$ vers $s$. Donc $d(t,s)\leq l$, cad $b\leq a$.  \\
+Puis avec le même raisonement, on a $a\leq b$  \\
+
+Soit $(s,t,u) \in S^3$. Soit $\gamma_1$ un chemin de $s$ à $t$ et $\gamma_2$ un chemin de $t$ à $s$.  \\
+
+Notons $@$ la concatenation des chemin et $|.|$ la longueur.  \\
+$\gamma_1 @ \gamma_2$ est un chemin de s à u de longueur $|\gamma_1|+|\gamma_2|$  \\
+Donc il existe un chemin de $s$ à $u$ de longueur $|\gamma_1|+|\gamma_2|$.  \\
+Donc $d(s,u) \leq |\gamma_1|+|\gamma_2| = d(s,t)+d(t,u)$  \\
+
+Soit $(s,t) \in S^2$ :  \\
+Si $s=t$, soit $\gamma=(s)$. $\gamma$ relie $s$ à $t$ et sa longueur est $0$.  \\
+
+Si $d(s,t)=0$. Soit $\gamma$ un plus court chemin de $s$ à $t$. $|\gamma|=0$. Donc le sommet de départ est le sommet d'arrivé donc $s=t$
+\end{dem}
+
+\section{Implémentation}
+
+Soit $G$ un graphe et $(S,E)$ ses composants   \\
+Soit $n=|S|$.  \\
+On supp dans la suite que $S=\llbracket 0,n\llbracket $  \\
+On utilise principalement deux méthodes pour enregistrer G.\\
+
+\begin{itemize}
+\item Matrice d'adjacence : C'est la matrice $M\in \mathbb M_n(\mathbb N)$ tq $\forall (i,j) \in \llbracket 0,n\llbracket ^2, M_{i,j}=(1 \text{ si } (i,j) \in A) (0 \text{ sinon })$
+\item Tableau de liste d'adjacences : C'est le tableau g de longueur n tq $\forall i \in \llbracket 0,n\llbracket $. g.(i) contient la liste des voisins de i
+\end{itemize}
+
+\begin{minted}[
+frame=lines,
+framesep=2mm,
+baselinestretch=1.2,
+bgcolor=white,
+fontsize=\footnotesize,
+linenos]
+{ocaml}
+type graphe1 = int array array;;
+type graphe2 = int list array;; 
+\end{minted}
+
+\section{Parcours d'un graphe}
+Souvent, on a besoin de parcourir les sommets de proche en proche à partir d'un sommet de départ.\\
+\subsection{Vocabulaire et invariants de boucle}
+\begin{itemize}
+\item Un sommet est dit *blanc* s'il n'est pas découvert
+\item Un sommet est dit *noir* s'il a été traité
+\item Un sommet est dit *gris* s'il est découvert mais pas traité (Sommet alors à traité)
+\end{itemize}
+
+\begin{itemize}
+\item (V N) : Les voisins des sommet noir sont noirs ou gris
+\item (V G) : Tout sommet gris a au moins un voisin noir
+\end{itemize}
+Les seuls changement de couleurs autorisés sont de *blanc vers gris* et de *gris vers noir*  \\
+
+NB : Pour que le programme termine, il faudra éviter de revenir à un noir.  \\
+
+Consequences des invariants de boucle :
+\begin{lem}
+On suppose (V N) et (V G) vérifiés. On suppose que l'algo a aussi satisfait à (C C). On suppose qu'il n'y a plus de sommet gris.  \\
+Alors les sommets blancs sont déconnectés des noirs cad : $\not\exists$ des chemins d'un noir vers un blanc
+\end{lem}
+
+\begin{dem}
+Supposons qu'il existe un chemin $\gamma$ tq en notant $n=|\gamma|$ et $s_0,...s_n$ ses sommets, $s_0$ est noir et $s_n$ est blanc. Soit $i=\max\{k\in \llbracket 0,n \rrbracket,s_k \text{noir}\}$. On a $i \leq n$ car $s_n$ est blanc. Donc $s_{i+1}$ existe, et est différent de noir. Donc $s_{i+1}$ est blanc car pas de gris par hypothese. Donc (V N) n'est pas vérifiée en $s_{i}$ et $s_{i+1}$ 
+\end{dem}
+
+\begin{lem}
+On suppose (V N), (V G), (C C). Notons $D$ l'ensemble des gris ou noir au debut de l'algorithme. Alors tout sommet noir ou gris est relié à $D$  $(*)$  
+\end{lem}
+
+\begin{dem}
+Notons $(*)$ la propriété et verifions que c'est un invariant de boucle. \\ 
+*Initialisation :* Soit $s$ un sommet noir ou gris au debut de l'algo alors $s \in D$. Prendre $\gamma = (s)$ de longueur 0 il relie s à l.  \\
+*Heredité :* Supposons $(*)$ vraie à un instant de l'algo. Effectuant une étape qui respecte (V N), (V G), et (C C).  \\
+S'il y a un changement de couleurs de gris vers noir, l'ensemble des sommets noirs ou gris n'est pas changé donc $(*)$ reste vrai.  \\
+S'il y a un changement blanc vers gris, Soit $s$ le sommet concerné. Par (V G), $s$ a un voisin noir,disons $t$. Par hypothese de récurrence, $t$ est relié à $l$. Alors $s$ est relié à $l$
+\end{dem}
+
+\begin{pro}
+On suppose qu'il n'y a plus de (V N), (V G), (C C). On suppose qu'au début de l'algo, $N=\emptyset$ et un seul sommet est gris, notons le $s_d$. On suppose que à la fin, $G=\emptyset$  \\
+Alors à la fin de la boucle, $N=$ (la composante connexe de $s_d$)  \\
+    
+Rappel : La composante connexe de  $s_d$ est l'ensemble des sommets reliés a $s_d$  \\
+\end{pro}
+
+C'est aussi la plus petite composante connexe de $G$ contenant $s_d$\\
+
+\begin{dem}
+Montrons que $N \subset CC$ de $s_d$. Soit $s \in N$, par le lemme 2, $s$ est rellié à $s_d$  \\
+Montrons que N $\not\subset$ CC de $s_d$. Soit $s$ relié a $s_d$, par le lemme 1, $s \not\in B$ et $G=\emptyset$ alors $s \in N$  \\
+
+Ainsi un algo vérifiant nos 3 props permet de trouver la composante connexe de $s_d$. Ce sera notre premier exemple. Une simple modification permettra de trouver un chemin de $s_d$ vers un autre sommet $s_a$. Puis un plus court chemin.\\
+\end{dem}
+
+\subsection{Squelette de programme impératif}
+\subsubsection{Algorithme}
+
+Entrée :
+\begin{itemize}
+    \item Un Grapge $(S,A)$
+    \item Un sommet $s_d \in S$
+\end{itemize}
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+    Créer 3 ensembles $N$,$G$ et $B$  
+    $N$ <- $\emptyset$
+    $B$ <- S  
+    $G$ <- $\emptyset$  
+    
+    Peindre $s_d$ en gris  
+    
+    Tant que $G \not= \emptyset$:  
+    
+        extraire un sommet $s$ de $G$  
+        Faire quelque chose  
+        Peindre $s$ en noir  
+        
+        $\forall t$ voisin de $s$:  
+            Si $t \in B$, le peindre en gris    
+    Renvoyer le resultat
+\end{minted}
+
+\subsubsection{Les invariants de boucle}
+
+\begin{itemize}
+    \item (V N) est verifié
+    \item (C C) est vérifié
+    \item (V G) est vérifié
+\end{itemize}
+
+\subsubsection{En pratique}
+
+Comment enregistrer $N$,$G$,$B$ ? \\
+
+En général, \\
+\begin{itemize}
+    \item $B$ n'est pas enregistré. Ce sont les sommets ni noirs, ni gris
+    \item $N$ : Un tableau "deja_vu" tq $\forall i \in S$, deja_vu.(i) <=> $i \in N$
+    \item $G$ : ça dépend de l'ordre dans lequel on veut traiter les sommets
+\end{itemize}
+
+\subsubsection{En autorisant les doublons dans G}
+
+Il est souvent plus pratique et parfois obligatoire d'utiliser à la place de $G$ une structure qui autorise les doublons.  \\
+Exemple : $(1,4,0,2,4)$ Après avoir traité $4$, celui-ci devient noir, et la file contient donc des noirs.  \\
+
+Ainsi :\\
+
+\begin{itemize}
+    \item La structure utilisée ne s'appellera plus $G$ mais aVisiter
+    \item Quand on sort un sommet de aVisiter, il faut vérifier qu'il est gris
+\end{itemize}
+
+Alors l'algo devient\\
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+Créer 3 ensembles $N$,$G$ et $B$  
+$N$ <- un tab de |S| bool initialement faux  
+aVisiter <- Une structure contenant initialement $s_d$    
+Peindre $s_d$ en gris  
+Tant que $G \not= \emptyset$:  
+    extraire un sommet $s$ de Avisiter  
+    Si Non N.(s):
+        Faire quelque chose  
+        Peindre $s$ en noir  
+        $\forall t$ voisin de $s$:  
+            Si NON N.(t):  
+                Mettre t dans aVisiter  
+Renvoyer le resultat 
+\end{minted}
+
+\begin{ex}
+    Calcul de composante connexe. Avec pour aVisiter une file d'attente  
+\end{ex}
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let composante_connexe_largeur g sd=
+let n= Array.length g in
+let deja_vu= Array.make n false in
+let a_Visiter= Queue.create () in
+Queue.add sd a_Visiter; 
+let rec visite_voisins = function
+    | [] -> ()
+    | t::q -> Queue.add t a_Visiter;
+            visite_voisins q
+in
+while  not (Queue.is_empty a_Visiter) do
+    let s= Queue.take a_Visiter in
+    if not (deja_vu.(s)) then
+    (
+    visite_voisins g.(s);
+    deja_vu.(s) <- true;
+    )
+done;
+(* Maintenant, la composante connexe de sd correspond aux sommetsde deja_vu *)
+let res = ref [] in
+for i=0 to n-1 do
+    if deja_vu.(i) then 
+    res:= i::(!res)
+done;
+!res
+;;
+\end{minted}
+
+\subsubsection{Terminaison}
+
+Variant de boucle :\\
+\begin{itemize}
+    \item Pour la version 1 (sans doublons dans $G$), le nombre de sommets non noirs est un variant de boucle.
+    \item Pour la version 2 (avec A_visiter qui peut contenir des doublons), on peut prendree le couple (nombre de sommets non noir,|aVisiter|) pour l'ordre lexicographique (Demonstration dans le poly). 
+\end{itemize}
+
+\subsubsection{Complexité}
+Méthode de l'exercice 1 :  \\
+Prendre chaque ligne, voir ce qu'elle coute et combien de fois max elle est executée.\\
+
+\subsection{Parcours en largeur}
+
+Un parcours en largeur traite d'abord les sommets les plus proches du sommet de départ.\\
+
+Pour réaliser un parcours en largeur, on prend aVisiter de type file d'attente.  \\
+Les deux exemples précedents étaient des parcours en largeur. \\
+\subsubsection{Invariant de boucle du parcours en largeur}
+
+\begin{prop}
+A un certain instant d'un parcours en largeur. Soit $n$ le nombre de sommets dans la file et $s_0,...,s_{n-1}$ les sommets dans l'ordre.  
+Alors $\exists d \in \mathbb N$ et $k \in \llbracket 0,n\llbracket $ tq $\vec{(s_{n-1},...,s_k,...,s_0)}$
+\begin{itemize}
+    \item $s_0,...,s_{k-1}$ sont à distance inferieur a $d$ de $s_d$
+    \item $s_k,...,s_{n}$ sont a distance inferieur a $d+1$ de $s_d$
+\end{itemize}
+En outre, les noirs sont les sommets à distance inferieur a $d-1$ ainsi que les sommets à distance $d$ qui ne sont pas dans la file.
+\end{prop}
+
+\subsection{Parcours en profondeur}
+
+Dans un parcours en profondeur, on poursuit un chemin autant que possible avant de partir sur un autre. Plus précisement, on visite en priorité les voisins du dernier sommet visité. Il suffit de remplacer la file par une pile.
+
+\begin{ex}
+    Calcul d'un composante connexe
+\end{ex}
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let composante_connexe_profondeur g sd=
+let n= Array.length g in
+let deja_vu= Array.make n false in
+let a_Visiter= Stack.create () in
+Stack.push sd a_Visiter; 
+let rec visite_voisins = function
+    | [] -> ()
+    | t::q -> Stack.push t a_Visiter;
+            visite_voisins q
+in
+while  not (Stack.is_empty a_Visiter) do
+    let s= Stack.pop a_Visiter in
+    if not (deja_vu.(s)) then
+    (
+    visite_voisins g.(s);
+    deja_vu.(s) <- true;
+    )
+done;
+(* Maintenant, la composante connexe de sd correspond aux sommetsde deja_vu *)
+let res = ref [] in
+for i=0 to n-1 do
+    if deja_vu.(i) then 
+    res:= i::(!res)
+done;
+!res
+;;
+\end{minted}
+
+
+
+\end{document}

@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{type} \PYG{k}{\PYGZsq{}}\PYG{n}{a} \PYG{n}{arbre} \PYG{o}{=} \PYG{n+nc}{Noeud} \PYG{k}{of} \PYG{k}{\PYGZsq{}}\PYG{n}{a} \PYG{o}{*} \PYG{o}{(}\PYG{k}{\PYGZsq{}}\PYG{n}{a} \PYG{n}{arbre}\PYG{o}{)} \PYG{k+kt}{list}\PYG{o}{;;}
+
+\PYG{k}{let} \PYG{k}{rec} \PYG{n}{somme} \PYG{o}{=} \PYG{k}{function}
+  \PYG{o}{|} \PYG{n+nc}{Noeud}\PYG{o}{(}\PYG{n}{e}\PYG{o}{,}\PYG{n}{fils}\PYG{o}{)} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{e} \PYG{o}{+} \PYG{n}{somme\PYGZus{}foret} \PYG{n}{fils}
+\PYG{o+ow}{and} \PYG{n}{somme\PYGZus{}foret} \PYG{o}{=} \PYG{k}{function}
+  \PYG{o}{|} \PYG{n+nb+bp}{[]} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{l+m+mi}{0}
+  \PYG{o}{|} \PYG{n}{t}\PYG{o}{::}\PYG{n}{q} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{o}{(}\PYG{n}{somme} \PYG{n}{t}\PYG{o}{)+}\PYG{n}{somme\PYGZus{}foret}\PYG{o}{(}\PYG{n}{q}\PYG{o}{)}
+\PYG{o}{;;}
+
+\PYG{k}{let} \PYG{k}{rec} \PYG{n}{etiquettes\PYGZus{}arbre} \PYG{o}{=} \PYG{k}{function}
+  \PYG{o}{|} \PYG{n+nc}{Noeud}\PYG{o}{(}\PYG{n}{e}\PYG{o}{,}\PYG{n}{fils}\PYG{o}{)\PYGZhy{}\PYGZgt{}} \PYG{n}{e}\PYG{o}{::(}\PYG{n}{etiquettes\PYGZus{}foret} \PYG{n}{fils}\PYG{o}{)}
+\PYG{o+ow}{and} \PYG{n}{etiquettes\PYGZus{}foret} \PYG{o}{=} \PYG{k}{function}
+  \PYG{o}{|} \PYG{n+nb+bp}{[]} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n+nb+bp}{[]}
+  \PYG{o}{|} \PYG{n}{t}\PYG{o}{::}\PYG{n}{q} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{etiquettes\PYGZus{}arbre}\PYG{o}{(}\PYG{n}{t}\PYG{o}{)@(}\PYG{n}{etiquettes\PYGZus{}foret} \PYG{n}{q}\PYG{o}{)}
+\PYG{o}{;;}
+\end{Verbatim}

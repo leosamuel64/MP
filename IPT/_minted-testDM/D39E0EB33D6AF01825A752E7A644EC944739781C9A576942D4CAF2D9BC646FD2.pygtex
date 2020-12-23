@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{let} \PYG{n}{floyd\PYGZus{}warshall} \PYG{n}{m}\PYG{o}{=}
+  \PYG{c}{(* Entrée : m matrice d\PYGZsq{}adjacence d\PYGZsq{}un graphe pondéré G *)}
+  \PYG{k}{let} \PYG{n}{n} \PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{length} \PYG{n}{m} \PYG{k}{in}
+  \PYG{k}{let} \PYG{n}{dist} \PYG{o}{=} \PYG{n}{copie\PYGZus{}mat} \PYG{n}{m} \PYG{k}{in}
+  \PYG{k}{for} \PYG{n}{k}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+    \PYG{c}{(* Ici dist contient les d\PYGZus{}\PYGZob{}i,j\PYGZcb{}\PYGZca{}\PYGZob{}k\PYGZcb{} *)}
+    \PYG{k}{let} \PYG{n}{sauv} \PYG{o}{=} \PYG{n}{copie\PYGZus{}mat} \PYG{n}{dist} \PYG{k}{in}
+    \PYG{k}{for} \PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+      \PYG{k}{for} \PYG{n}{j}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+        \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{min} \PYG{o}{(}\PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{))} \PYG{o}{(}\PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{k}\PYG{o}{)+.}\PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{k}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{));}
+      \PYG{k}{done}\PYG{o}{;}
+    \PYG{k}{done}\PYG{o}{;}
+    \PYG{c}{(* Maintenant, dist contient les d\PYGZus{}\PYGZob{}i,j\PYGZcb{}\PYGZca{}\PYGZob{}k+1\PYGZcb{} *)}
+  \PYG{k}{done}\PYG{o}{;}
+  \PYG{n}{dist}
+\PYG{o}{;;}
+\end{Verbatim}

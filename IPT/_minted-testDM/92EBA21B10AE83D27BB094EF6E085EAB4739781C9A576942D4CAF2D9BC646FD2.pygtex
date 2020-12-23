@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{let} \PYG{n}{parcours\PYGZus{}prof} \PYG{n}{g} \PYG{n}{sd} \PYG{o}{=}
+  \PYG{k}{let} \PYG{n}{n} \PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{length} \PYG{n}{g} \PYG{k}{in}
+  \PYG{k}{let} \PYG{n}{deja\PYGZus{}vu} \PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{make} \PYG{n}{n} \PYG{n+nb+bp}{false} \PYG{k}{in}
+
+  \PYG{k}{let} \PYG{k}{rec} \PYG{n}{visite\PYGZus{}sommet} \PYG{n}{s}\PYG{o}{=}
+    \PYG{n}{deja\PYGZus{}vu}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n+nb+bp}{true}\PYG{o}{;}
+    \PYG{c}{(* Faire quelque chose avec s... *)}
+    \PYG{n}{visite\PYGZus{}voisins} \PYG{n}{s} \PYG{n}{g}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{)}
+  \PYG{o+ow}{and} \PYG{n}{visite\PYGZus{}voisins} \PYG{n}{s}\PYG{o}{=} \PYG{k}{function}
+    \PYG{o}{|} \PYG{n+nb+bp}{[]} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{c}{(* Renvoyer quelque chose *)}
+    \PYG{o}{|} \PYG{n}{t}\PYG{o}{::}\PYG{n}{autre\PYGZus{}Voisin} \PYG{k}{when} \PYG{n}{not}\PYG{o}{(}\PYG{n}{deja\PYGZus{}vu}\PYG{o}{.(}\PYG{n}{t}\PYG{o}{))} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{c}{(* Renvoyer quelque chose avec visite\PYGZus{}sommet et visite\PYGZus{}voisins *)}
+    \PYG{o}{|} \PYG{n}{t}\PYG{o}{::}\PYG{n}{autre\PYGZus{}Voisin} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{visite\PYGZus{}voisins} \PYG{n}{autre\PYGZus{}Voisin}
+
+  \PYG{k}{in} \PYG{n}{visite\PYGZus{}sommet} \PYG{n}{sd}
+\PYG{o}{;;}
+\end{Verbatim}

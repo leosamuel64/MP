@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{SELECT} \PYG{n}{Achats}\PYG{p}{.}\PYG{n}{idPoste}\PYG{p}{,} \PYG{k}{AVG}\PYG{p}{(}\PYG{n}{prix}\PYG{p}{)}
+\PYG{k}{FROM} \PYG{n}{Achats} \PYG{k}{JOIN} \PYG{n}{Postes} \PYG{k}{on} \PYG{n}{Achats}\PYG{p}{.}\PYG{n}{idPoste} \PYG{o}{=} \PYG{n}{Postes}\PYG{p}{.}\PYG{n}{idPoste}
+\PYG{k}{GROUP} \PYG{k}{BY} \PYG{n}{Achats}\PYG{p}{.}\PYG{n}{idPoste}
+\end{Verbatim}

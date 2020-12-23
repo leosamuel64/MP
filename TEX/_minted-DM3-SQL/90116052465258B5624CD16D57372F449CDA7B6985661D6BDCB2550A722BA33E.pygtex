@@ -1,0 +1,25 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{NombreDePeaux}\PYG{p}{(}\PYG{n}{année}\PYG{p}{):}
+    \PYG{n}{t}\PYG{o}{=}\PYG{n}{executeRequete}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+s2}{    SELECT *}
+\PYG{l+s+s2}{    FROM(}
+\PYG{l+s+s2}{        SELECT annee,SUM(QuantitéLièvre) AS PeauxLièvre,SUM(QuantitéLynx) AS PeauxLynx}
+\PYG{l+s+s2}{        FROM(}
+\PYG{l+s+s2}{		SELECT annee, SUM(nbPeaux) AS QuantitéLièvre,0 AS QuantitéLynx}
+\PYG{l+s+s2}{		from Achats}
+\PYG{l+s+s2}{		WHERE espece = \PYGZdq{}lievre\PYGZdq{}}
+\PYG{l+s+s2}{		GROUP BY annee}
+
+\PYG{l+s+s2}{	  UNION}
+
+\PYG{l+s+s2}{	  SELECT annee, 0 AS QuantitéLièvre,SUM(nbPeaux) AS QuantitéLynx}
+\PYG{l+s+s2}{		from Achats}
+\PYG{l+s+s2}{		WHERE espece = \PYGZdq{}lynx\PYGZdq{}}
+\PYG{l+s+s2}{		GROUP BY annee}
+\PYG{l+s+s2}{    ) group by annee}
+\PYG{l+s+s2}{    WHERE annee=\PYGZdq{}\PYGZdq{}\PYGZdq{}}\PYG{o}{+}\PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{année}\PYG{p}{)}
+    \PYG{p}{)}
+    \PYG{n}{lièvre}\PYG{p}{,}\PYG{n}{lynx} \PYG{o}{=} \PYG{n}{t}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{],}\PYG{n}{t}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}
+
+    \PYG{k}{return}\PYG{p}{(}\PYG{n}{lièvre}\PYG{p}{,} \PYG{n}{lynx}\PYG{p}{)}
+\end{Verbatim}

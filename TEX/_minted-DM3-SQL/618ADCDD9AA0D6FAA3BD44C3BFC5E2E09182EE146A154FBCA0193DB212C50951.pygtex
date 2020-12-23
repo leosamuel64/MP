@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{SELECT} \PYG{n}{annee}\PYG{p}{,} \PYG{k}{SUM}\PYG{p}{(}\PYG{n}{nbPeaux}\PYG{p}{)} \PYG{k}{AS} \PYG{n}{Quantite}
+\PYG{k}{from} \PYG{n}{Achats}
+\PYG{k}{WHERE} \PYG{n}{espece} \PYG{o}{=} \PYG{l+s+ss}{\PYGZdq{}lynx\PYGZdq{}}
+\PYG{k}{GROUP} \PYG{k}{BY} \PYG{n}{annee}
+\end{Verbatim}

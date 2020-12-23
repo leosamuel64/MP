@@ -1,0 +1,26 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{let} \PYG{n}{floyd\PYGZus{}warshall\PYGZus{}chemin} \PYG{n}{m} \PYG{n}{sd} \PYG{n}{sa}\PYG{o}{=}
+  \PYG{k}{let} \PYG{n}{n} \PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{length} \PYG{n}{m} \PYG{k}{in}
+  \PYG{k}{let} \PYG{n}{chemin} \PYG{o}{=} \PYG{n+nn}{Array}\PYG{p}{.}\PYG{n}{make\PYGZus{}matrix} \PYG{n}{n} \PYG{n}{n} \PYG{n+nb+bp}{[]} \PYG{k}{in}
+  \PYG{k}{let} \PYG{n}{dist} \PYG{o}{=} \PYG{n}{copie\PYGZus{}mat} \PYG{n}{m} \PYG{k}{in}
+  \PYG{k}{for} \PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+    \PYG{k}{for} \PYG{n}{j}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+      \PYG{k}{if} \PYG{n}{m}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZgt{}} \PYG{n}{infinity} \PYG{o}{\PYGZam{}\PYGZam{}} \PYG{n}{i}\PYG{o}{\PYGZlt{}\PYGZgt{}}\PYG{n}{j} \PYG{k}{then}
+        \PYG{n}{chemin}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{o}{[}\PYG{n}{i}\PYG{o}{];}
+    \PYG{k}{done}\PYG{o}{;}
+  \PYG{k}{done}\PYG{o}{;}
+    \PYG{k}{for} \PYG{n}{k}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+        \PYG{k}{let} \PYG{n}{sauv} \PYG{o}{=} \PYG{n}{copie\PYGZus{}mat} \PYG{n}{dist} \PYG{k}{in}
+        \PYG{k}{for} \PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+            \PYG{k}{for} \PYG{n}{j}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{k}{to} \PYG{n}{n}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{k}{do}
+                \PYG{k}{if} \PYG{o}{(}\PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{k}\PYG{o}{)} \PYG{o}{+.} \PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{k}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{))} \PYG{o}{\PYGZlt{}} \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{)} \PYG{k}{then}
+                    \PYG{o}{(}
+                    \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{k}\PYG{o}{)} \PYG{o}{+.} \PYG{n}{sauv}\PYG{o}{.(}\PYG{n}{k}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{);}
+                    \PYG{n}{chemin}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{chemin}\PYG{o}{.(}\PYG{n}{i}\PYG{o}{).(}\PYG{n}{k}\PYG{o}{)@}\PYG{n}{chemin}\PYG{o}{.(}\PYG{n}{k}\PYG{o}{).(}\PYG{n}{j}\PYG{o}{);}
+          \PYG{o}{)}
+            \PYG{k}{done}\PYG{o}{;}
+        \PYG{k}{done}\PYG{o}{;}
+    \PYG{k}{done}\PYG{o}{;}
+  \PYG{n}{chemin}\PYG{o}{.(}\PYG{n}{sd}\PYG{o}{).(}\PYG{n}{sa}\PYG{o}{)@[}\PYG{n}{sa}\PYG{o}{]}
+\PYG{o}{;;}
+\end{Verbatim}

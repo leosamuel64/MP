@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{type} \PYG{n}{graphe1} \PYG{o}{=} \PYG{k+kt}{int} \PYG{k+kt}{array} \PYG{k+kt}{array}\PYG{o}{;;}
+\PYG{k}{type} \PYG{n}{graphe2} \PYG{o}{=} \PYG{k+kt}{int} \PYG{k+kt}{list} \PYG{k+kt}{array}\PYG{o}{;;}
+\end{Verbatim}

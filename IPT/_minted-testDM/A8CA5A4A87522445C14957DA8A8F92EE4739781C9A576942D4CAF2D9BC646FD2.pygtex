@@ -1,0 +1,20 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nc}{Cr}\PYG{err}{é}\PYG{n}{er} \PYG{n}{un} \PYG{n}{tableau} \PYG{n}{dist} \PYG{n}{de} \PYG{n}{longueru} \PYG{o}{\PYGZdl{}|}\PYG{n+nc}{S}\PYG{o}{|\PYGZdl{}} \PYG{n}{contenant} \PYG{n}{initialement} \PYG{n}{des} \PYG{o}{\PYGZdl{}}\PYG{err}{\PYGZbs{}}\PYG{n}{infty}\PYG{o}{\PYGZdl{}}
+\PYG{n+nc}{Cr}\PYG{err}{é}\PYG{n}{er} \PYG{n}{une} \PYG{n}{structure} \PYG{n}{pour} \PYG{n}{les} \PYG{n}{sommets} \PYG{n}{gris} \PYG{n}{contenant} \PYG{o}{\PYGZdl{}}\PYG{n}{s\PYGZus{}d}\PYG{o}{\PYGZdl{}.}
+\PYG{n}{dist}\PYG{o}{.(}\PYG{n}{sd}\PYG{o}{)\PYGZlt{}\PYGZhy{}}\PYG{l+m+mi}{0}
+\PYG{o}{\PYGZdl{}}\PYG{n}{s}\PYG{o}{\PYGZdl{}} \PYG{n}{blanc} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{)=\PYGZdl{}}\PYG{err}{\PYGZbs{}}\PYG{n}{infty}\PYG{o}{\PYGZdl{}}
+\PYG{o}{\PYGZdl{}}\PYG{n}{s}\PYG{o}{\PYGZdl{}} \PYG{n}{est} \PYG{n}{noir} \PYG{n}{s\PYGZsq{}il} \PYG{n}{n\PYGZsq{}est} \PYG{n}{pas} \PYG{n}{gris} \PYG{n}{et} \PYG{n}{s\PYGZsq{}il} \PYG{n}{n\PYGZsq{}est} \PYG{n}{pas} \PYG{n}{blanc}
+
+\PYG{n+nc}{Tant} \PYG{n}{que} \PYG{o}{\PYGZdl{}}\PYG{n}{s\PYGZus{}a}\PYG{o}{\PYGZdl{}} \PYG{n}{n\PYGZsq{}est} \PYG{n}{pas} \PYG{n}{noir} \PYG{n}{et} \PYG{n}{gris} \PYG{n}{pas} \PYG{n}{vide}\PYG{o}{:}
+
+    \PYG{n}{extraire} \PYG{n}{de} \PYG{n}{gris} \PYG{n}{le} \PYG{n}{sommet} \PYG{n}{pour} \PYG{n}{lequelle} \PYG{n}{dist} \PYG{n}{est} \PYG{n}{minimal}
+    \PYG{n}{pour} \PYG{n}{tout} \PYG{n}{t} \PYG{n}{voisin} \PYG{n}{de} \PYG{n}{s}\PYG{o}{:}
+        \PYG{n}{si} \PYG{n}{t} \PYG{n}{est} \PYG{n}{blanc}\PYG{o}{:}
+            \PYG{n}{on} \PYG{n}{le} \PYG{n}{met} \PYG{n}{en} \PYG{n}{gris}
+            \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{t}\PYG{o}{)\PYGZlt{}\PYGZhy{}}\PYG{n}{dist}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{)+}\PYG{n}{l\PYGZus{}st}
+        \PYG{n}{sinon} \PYG{n}{si} \PYG{n}{t} \PYG{n}{est} \PYG{n}{gris}\PYG{o}{:}
+            \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{t}\PYG{o}{)} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{min}\PYG{o}{(}\PYG{n}{dist}\PYG{o}{.(}\PYG{n}{t}\PYG{o}{),} \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{s}\PYG{o}{)+}\PYG{n}{l\PYGZus{}st}
+        \PYG{n}{sinon}
+            \PYG{n+nb+bp}{()}
+\PYG{n+nc}{Renvoyer} \PYG{n}{dist}\PYG{o}{.(}\PYG{n}{s\PYGZus{}a}\PYG{o}{)}
+\end{Verbatim}
