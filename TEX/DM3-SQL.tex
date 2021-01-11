@@ -115,7 +115,7 @@ Question 5 :\\
     fontsize=\footnotesize,
     linenos]
     {sql}
-SELECT max(Quantite) 
+SELECT MAX(Quantite) 
 FROM (	SELECT annee, SUM(nbPeaux) AS Quantite
         from Achats
         WHERE espece = "lynx"
@@ -161,9 +161,9 @@ Question 7 :\\
     fontsize=\footnotesize,
     linenos]
     {sql}
-SELECT Achats.idPoste, AVG(prix)
-FROM Achats JOIN Postes on Achats.idPoste = Postes.idPoste
-GROUP BY Achats.idPoste
+SELECT idPoste, AVG(prix)
+FROM Achats
+GROUP BY idPoste
 \end{minted}
 
 Question 8 :\\
@@ -221,7 +221,7 @@ def NombreDePeaux(année):
 
 Question 2 :\\
 
-Afin d'effacer la table Achats, un pirate peut utiliser \textbf{NombreDePeaux("1871;DROP TABLE Achats")}
+Afin d'effacer la table Achats, un pirate peut utiliser \textbf{NombreDePeaux("1871;DROP TABLE Achats; --")}
 \newline
 
 

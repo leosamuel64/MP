@@ -1,0 +1,156 @@
+\begin{document}
+
+\section{Calcul booléen}
+
+\subsection{Notations}
+
+\begin{itemize}
+    \item Vrai : $\true$
+    \item Faux : $\false$
+    \item Non : $\lnot$
+    \item Et : $\land$
+    \item Ou : $\lor$
+\end{itemize}
+
+De plus, dans ce chapitre, on notera $B=\{\true,\false\}$ \\
+Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
+
+\subsection{Règles de calcul}
+
+\begin{prop}
+    $\land$ :
+    \begin{itemize}
+        \item Commutatif
+        \item Associatif
+        \item Neutre : $\true$
+    \end{itemize}
+\end{prop}
+
+\begin{prop}
+    $\lor$ :
+    \begin{itemize}
+        \item Commutatif
+        \item Associatif
+        \item Neutre : $\false$
+    \end{itemize}
+\end{prop}
+
+\begin{prop}
+    Entre $\lor$, $\land$ et $\lnot$
+    \begin{itemize}
+        \item Distributivité ($\lor$ est distributif sur $\land$ et inversement contrairement aux nombres)
+        \item Loi de De Morgan : $\forall (a,b,c) \in B^3$
+            \begin{itemize}
+                \item $\lnot(a\land b)= \lnot a \lor \lnot b$
+                \item $lnot(a\lor b)= \lnot a \land \lnot b$
+            \end{itemize}
+    \end{itemize}
+\end{prop}
+
+\begin{dem}
+    Montrons que $\forall (a,b,c) \in B^3, a\land(b\lor c)=(a\land b)\lor (a \land c)$ \\
+    On étudie toutes les possibilités pour ($(a,b,c))$. Il y en a $8$ car $2^3=8$ \\
+    On les regroupe dans une table de vérité \\
+
+    --Insere Table de vérité-- \\
+
+    Les colonnes sont identiques \\
+\end{dem}
+
+Les propriétés de $\land$ et $\lor$ ressemblent à celle pour $\cdot$ et $+$ sur $\mathbb{Z}/n\mathbb{Z}$ \\
+
+On utilise alors souvent : 
+\begin{itemize}
+    \item $0$
+    \item $1$
+    \item $\cdot$
+    \item $+$
+\end{itemize}
+
+Dans ce cas, les loi de DE Morgan sont :
+\item Loi de De Morgan : $\forall (a,b,c) \in B^3$
+\begin{itemize}
+    \item $\barre{(a\land b)}= \barre a + \barre b$
+    \item $\barre{(a + b)}= \barre a  \barre b$
+\end{itemize}
+
+Attention dans ce cas, $1+1=1$
+
+\begin{rq}
+    $(\mathbb{Z}/n\mathbb{Z},+,\cdot)$ est un corps. \\
+    $(B,\lor,\land)$ n'est même pas un anneau car $1$ n'a pas d'opposé
+\end{rq}
+
+\begin{rq}
+    Notons $\lxor$ le ou exclusif : \\
+    $1\lxor 1=0$
+    On peut vérifier que $(B,\lxor,\land)$ est un corps , isomorphe à $\mathbb{Z}/n\mathbb{Z}$
+\end{rq}
+
+\subsection{Autres connecteurs logiques}
+Combien y-a-t-il de fonction de $B$ dans $B$ ? \\
+Il y en a $|B|^{|B|}=4$ \\
+Il y a $id,\lnot,0,1$ \\
+
+Combien y-a-t-il de fonction de $B^2$ dans $B$ ?
+Il y en a 16. Nous connaisons déja $\lor,\land,\lxor$
+
+Pour definir un opérateur, il suffit de donnée sa table de vérité
+
+\subsubsection{L'implication}
+\begin{def}
+    $\forall a,b \in B$, on note $a=>b$ le booléen $b\lor\lnot a$
+\end{def}
+
+\begin{ex}
+    "Mange ta soupe ou va dans ta chambre"  by FP\\
+    donne \\
+    "Si tu ne mange pas ta soupe alors va dans ta chambre"\\
+\end{ex}
+
+Interpretation en mathématiques :\\
+Table de vérité de $=>$
+Ainsi, la formule $\forall (a,b) in \B^2, a => b$ est vraie si et seulement si a chaque fois que a est vrai, b l'est aussi. (Quand a est faux, b peut valoir n'importe quoi !)
+
+Digressions : \\
+Un théorème est une formule $\forall x \in E, P(x) => Q(x)$ où $E$ est un ensemble et $P,Q$ des prédicats sur $E$. (fonctions de $E$ dans $B$)
+Dans le cas où $P$ est faux, on a aucune informations sur $Q$. 
+
+Pour montrer q'un théorème est faux, il faut montrer
+$\lnot(\forall x \in E, P(x) => Q(x))$ cad $\exists x \in E, \lnot(P(x) => Q(x))$ cad $\exists x \in E, \lnot Q(x) \land P(x)$
+Ainsi, cela revient à trouver un $x\in E$ pour lequel l'hypothèse est vraie mais la conclusion est fausse. Un tel $x$ s'appelle un contre-exemple
+
+\subsubsection{Equivalents}
+\begin{def}
+    $\forall (a,b) \in B^2$, on note $a<=>b$ le booléen $(a=>b) \land (b=>a)$
+    C'est en réalité la même chose que $=$ pour les booléens
+\end{def}
+
+\subsubsection{Non-et}
+\begin{def}
+    $\forall (a,b) \in B^2,\lnot(a\land b)$ 
+\end{def}
+
+Il est utilisé car il coute seulement 3 transistors. \\
+On peut definir les autres opérations à partir du non-et. (cf Exercice 9) \\
+
+De même on définit non-ou.\\
+
+En général dans un langage, il est seulement fournit $\lnot,\land,\lor$ desquels on peut définir les autres.
+
+POUR JEUDI : Exercice 6
+
+\section{Formules logiques}
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
