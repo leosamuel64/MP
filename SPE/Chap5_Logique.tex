@@ -1,18 +1,20 @@
 \begin{document}
+\maketitle
 
 \section{Calcul booléen}
 
 \subsection{Notations}
 
 \begin{itemize}
-    \item Vrai : $\true$
-    \item Faux : $\false$
+    \item Vrai : $\top$
+    \item Faux : $\bot$
     \item Non : $\lnot$
     \item Et : $\land$
     \item Ou : $\lor$
 \end{itemize}
+\newline
 
-De plus, dans ce chapitre, on notera $B=\{\true,\false\}$ \\
+De plus, dans ce chapitre, on notera $B=\{\top,\bot\}$ \\
 Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
 
 \subsection{Règles de calcul}
@@ -22,7 +24,7 @@ Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
     \begin{itemize}
         \item Commutatif
         \item Associatif
-        \item Neutre : $\true$
+        \item Neutre : $\top$
     \end{itemize}
 \end{prop}
 
@@ -31,7 +33,7 @@ Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
     \begin{itemize}
         \item Commutatif
         \item Associatif
-        \item Neutre : $\false$
+        \item Neutre : $\bot$
     \end{itemize}
 \end{prop}
 
@@ -42,7 +44,7 @@ Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
         \item Loi de De Morgan : $\forall (a,b,c) \in B^3$
             \begin{itemize}
                 \item $\lnot(a\land b)= \lnot a \lor \lnot b$
-                \item $lnot(a\lor b)= \lnot a \land \lnot b$
+                \item $\lnot(a\lor b)= \lnot a \land \lnot b$
             \end{itemize}
     \end{itemize}
 \end{prop}
@@ -52,7 +54,19 @@ Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
     On étudie toutes les possibilités pour ($(a,b,c))$. Il y en a $8$ car $2^3=8$ \\
     On les regroupe dans une table de vérité \\
 
-    --Insere Table de vérité-- \\
+        \begin{tabular}{|l|l|l|l|l|l|l|l|}
+        \hline
+        $a$ & $b$ & $c$ & $b\lor c$ & $a\land (b\lor c$ & $a\land b$ & $a \land c$ & $(a\land b)\lor (a\land c)$ \\ \hline
+        0   & 0   & 0   & 0         & 0                 & 0          & 0           & 0                           \\ \hline
+        0   & 0   & 1   & 1         & 0                 & 0          & 0           & 0                           \\ \hline
+        0   & 1   & 0   & 1         & 0                 & 0          & 0           & 0                           \\ \hline
+        0   & 1   & 1   & 1         & 0                 & 0          & 0           & 0                           \\ \hline
+        1   & 0   & 0   & 0         & 0                 & 0          & 0           & 0                           \\ \hline
+        1   & 0   & 1   & 1         & 1                 & 0          & 1           & 1                           \\ \hline
+        1   & 1   & 0   & 1         & 1                 & 1          & 0           & 1                           \\ \hline
+        1   & 1   & 1   & 1         & 1                 & 1          & 1           & 1                            \\ \hline
+        \end{tabular}
+
 
     Les colonnes sont identiques \\
 \end{dem}
@@ -70,8 +84,8 @@ On utilise alors souvent :
 Dans ce cas, les loi de DE Morgan sont :
 \item Loi de De Morgan : $\forall (a,b,c) \in B^3$
 \begin{itemize}
-    \item $\barre{(a\land b)}= \barre a + \barre b$
-    \item $\barre{(a + b)}= \barre a  \barre b$
+    \item $\overline{(a\land b)}= \overline a + \overline b$
+    \item $\overline{(a + b)}= \overline a  \overline b$
 \end{itemize}
 
 Attention dans ce cas, $1+1=1$
@@ -99,7 +113,7 @@ Pour definir un opérateur, il suffit de donnée sa table de vérité
 
 \subsubsection{L'implication}
 \begin{def}
-    $\forall a,b \in B$, on note $a=>b$ le booléen $b\lor\lnot a$
+    $\forall a,b \in B$, on note $a\Rightarrowb$ le booléen $b\lor\lnot a$
 \end{def}
 
 \begin{ex}
@@ -109,20 +123,30 @@ Pour definir un opérateur, il suffit de donnée sa table de vérité
 \end{ex}
 
 Interpretation en mathématiques :\\
-Table de vérité de $=>$
-Ainsi, la formule $\forall (a,b) in \B^2, a => b$ est vraie si et seulement si a chaque fois que a est vrai, b l'est aussi. (Quand a est faux, b peut valoir n'importe quoi !)
+Table de vérité de $\Rightarrow$ :
+
+    \begin{tabular}{|l|l|l|}
+    $a$ & $b$ & $a\Rightarrow b$ \\ \hline
+    0   & 0   & 1                \\ \hline
+    0   & 1   & 1                \\ \hline
+    1   & 0   & 0                \\ \hline
+    1   & 1   & 1     \\ \hline          
+    \end{tabular}
+
+
+Ainsi, la formule $\forall (a,b) in B^2, a \Rightarrow b$ est vraie si et seulement si a chaque fois que a est vrai, b l'est aussi. (Quand a est faux, b peut valoir n'importe quoi !)
 
 Digressions : \\
-Un théorème est une formule $\forall x \in E, P(x) => Q(x)$ où $E$ est un ensemble et $P,Q$ des prédicats sur $E$. (fonctions de $E$ dans $B$)
+Un théorème est une formule $\forall x \in E, P(x) \Rightarrow Q(x)$ où $E$ est un ensemble et $P,Q$ des prédicats sur $E$. (fonctions de $E$ dans $B$)
 Dans le cas où $P$ est faux, on a aucune informations sur $Q$. 
 
 Pour montrer q'un théorème est faux, il faut montrer
-$\lnot(\forall x \in E, P(x) => Q(x))$ cad $\exists x \in E, \lnot(P(x) => Q(x))$ cad $\exists x \in E, \lnot Q(x) \land P(x)$
+$\lnot(\forall x \in E, P(x) \Rightarrow Q(x))$ cad $\exists x \in E, \lnot(P(x) \Rightarrow Q(x))$ cad $\exists x \in E, \lnot Q(x) \land P(x)$
 Ainsi, cela revient à trouver un $x\in E$ pour lequel l'hypothèse est vraie mais la conclusion est fausse. Un tel $x$ s'appelle un contre-exemple
 
 \subsubsection{Equivalents}
 \begin{def}
-    $\forall (a,b) \in B^2$, on note $a<=>b$ le booléen $(a=>b) \land (b=>a)$
+    $\forall (a,b) \in B^2$, on note $a<\Rightarrowb$ le booléen $(a\Rightarrowb) \land (b\Rightarrowa)$
     C'est en réalité la même chose que $=$ pour les booléens
 \end{def}
 
@@ -138,9 +162,147 @@ De même on définit non-ou.\\
 
 En général dans un langage, il est seulement fournit $\lnot,\land,\lor$ desquels on peut définir les autres.
 
-POUR JEUDI : Exercice 6
 
 \section{Formules logiques}
+
+\subsection{Type Caml}
+
+Voici un type pour représenter les formules logiques :
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+    type formule =
+        | Variable of string
+        | Non of formule
+        | Et of (formule*formule)
+        | Ou of (formule*formule)
+        | Constante of bool
+        ;;
+
+    \end{minted}
+
+    Ainsi l'exemple $\overline{a+b}\cdot c$ par :
+
+
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+    let exemple 1 = Et(Non(Ou(Variable "a",Variable "b")),Variable "c");;
+    \end{minted}
+
+Ce type est similaire à un type arbre.
+
+\subsection{Définition Mathématique}
+
+On définit le concept de formule abstraite.\\
+Soit $\Sigma$ un ensemble dont les éléments seront appelés des "variable (booléenes)". On définit alors l'ensemble des formules logiques ainsi :\\
+
+\begin{itemize}
+    \item $\forall x \in \Sigma,x$ est une formule
+    \item $\forall b \in B,b$ est une formule
+    \item $\forall \text{ formule } f, \overline{f}$ est une formule
+    \item $\forall \text{ formules } f_1,f_2, f_1+f_2 \text{ et } f_1f_2$ sont des formules
+\end{itemize}
+
+\begin{exemple}\\
+    Soit $a,b,c \in B$\\
+    $\overline{(a+b)}c$ est une formule\\
+    $\lor \lor a$ n'est pas une formule\\
+\end{exemple} 
+
+\subsection{Sémantique}
+
+Donnons un sens aux formules abstraites définies ci-dessus.\\
+
+En pratique, on va définir des fonctions qui utilisent ces formules
+
+\begin{def}
+    Un contexte (ou distribution de vérité ou valuation) sur $\Sigma$ est une fonction de $\Sigma$ dans $B$.\\
+\end{def}
+
+Choisir un contexte sur $\Sigma$ revient à choisir la valeur de chaque variable.
+
+\begin{def}
+    Soit $\phi$ un contexte sur $\Sigma$. Notons $\mathbb{F}$ l'ensemble des formule sur $\Sigma$.\\
+
+    On définit la fonction "Evaluation en $\phi$", qu'on note $E_v_{\phi}$\\
+    Ainsi:\\
+    $\forall b \ in B, E_v_{\phi}(b)=b$ \\
+    $\forall x \ in \Sigma, E_v_{\phi}(x)=\phi(x)$ \\
+    $\forall f in \mathbb{F},E_v_{\phi}(\lnot f)=\lnot E_v_{\phi}(f)$ \\
+    $\forall f_1,f_2 in \mathbb{F},E_v_{\phi}(f_1f_2)= E_v_{\phi}(f_1)E_v_{\phi}(f_2)$ \\
+    $\forall f_1,f_2 in \mathbb{F},E_v_{\phi}(f_1+f_2)= E_v_{\phi}(f_1)+E_v_{\phi}(f_2)$ \\
+\end{def}
+
+Pour représenter un contexte en Ocaml, utilisons un dictionnaire. Pour des exemples avec peu de variables, utilisons les listes d'association.\\
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+    type contexte = (string * bool) list;;
+    \end{minted}
+
+La fonction d'évaluation devient alors : \\ 
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+    let rec evaluation contexte formule=
+        match formule with
+        | Constante b -> b
+        | Variable x -> List.assoc x contexte
+        | Non f ->not (evaluation contexte f)
+        | Ou (f1,f2) -> (evaluation contexte f1) || (evaluation contexte f2)
+        | Et (f1,f2) -> (evaluation contexte f1) && (evaluation contexte f2)
+    ;;
+    \end{minted}
+
+\subsection{Vocabualire}
+
+Notons toujours $\mathbb{F}$ l'ensemble des formules. Notons $\mathbb{C} l'ensemble des contextes sur $\Sigma$
+
+\begin{def}
+    Soit $f \in \mathbb{F}$
+    \begin{itemize}
+        \item On dit que $f$ est satisfiable lorsque $\exists \phi \in \mathbb{C} tq E_v_{\phi}(f)=\top$
+        \item On dit que $f$ est tautologique lorsque $\exists \phi \in \mathbb{C} tq E_v_{\phi}(f)=\top$
+        \item Soit $g \in mathbb{F}$. On dit que $f$ est équivalente à $g$ ($f\equiv g$) lorsque $E_v_{\phi}(f)=E_v_{\phi}(g)$
+    \end{itemize}
+\end{def}
+
+Ecrivons une fonction qui teste si une formule est satisfiable :\\
+
+Méthode naive : calculons la liste de tous les contextes :
+
+
+
+
+
+
+
+
 
 
 
