@@ -15,7 +15,11 @@ type contexte = (string * bool) list;;
 let rec evaluation contexte formule=
   match formule with
   | Constante b -> b
-  | Variable x -> List.assoc x contexte
+  | Variable x -> (try
+                    List.assoc x contexte
+                  with
+                  | Not_found -> false
+                  )
   | Non f ->not (evaluation contexte f)
   | Ou (f1,f2) -> (evaluation contexte f1) || (evaluation contexte f2)
   | Et (f1,f2) -> (evaluation contexte f1) && (evaluation contexte f2)
@@ -64,3 +68,59 @@ listeContexte ["a";"b"];;
 
 
 (* faire les fonctions de la def *)
+
+let estSatisfiable formule=
+  let variables = listeVariables formule in
+  let contextes = listeContexte variables in
+  
+  let rec aux contexte =
+    match contexte with
+    | [] -> false
+    | t::q -> (evaluation t formule) || aux q
+  in
+  aux contextes
+;;
+
+let exemple2 = Et(Non(Variable "p"),Variable "p");;
+let exemple3 = Ou(Non(Variable "p"),Variable "p");;
+
+estSatisfiable exemple1;;
+
+let estTautologique formule=
+  let variables = listeVariables formule in
+  let contextes = listeContexte variables in
+  
+  let rec aux contexte =
+    match contexte with
+    | [] -> true
+    | t::q -> (evaluation t formule) && aux q
+  in
+  aux contextes
+;;
+  
+estTautologique exemple3;;
+
+let plusLongue l1 l2=
+  let a, b = List.length l1,List.length l2 in
+  if a > b then
+    l1
+  else l2
+;;
+
+let sontEquivalente f g=
+  let variablesf = listeVariables f in
+  let variablesg = listeVariables g in
+  
+  let contextes = listeContexte (plusLongue variablesf variablesg) in
+
+  let rec aux contexte =
+    match contexte with
+    | [] -> true
+    | t::q -> ((evaluation t f)=(evaluation t g)) && (aux q)
+  in
+  aux contextes
+;;
+
+sontEquivalente exemple3 (Constante true);;
+
+
