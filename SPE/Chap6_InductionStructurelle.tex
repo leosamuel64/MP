@@ -1,0 +1,137 @@
+\begin{document}
+
+Il s'agit d'une variante de la récurrence.
+
+\section{Récurrence classique sur $\mathbb N$}
+
+$\mathbb{N}$ peut etre définis par 
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+type entier_nat = 0 | succ of entier_nat;; 
+\end{minted}
+
+\begin{th}
+    Théorème de récurrence : \\
+    On suppose :
+    \begin{itemize}
+        \item $P(0)$
+        \item $\forall n \in \mathbb{N}, P(n)\Rightarrow P(n+1)$
+    \end{itemize}
+    Alors $\forall n \in \mathbb{N}, P(n)$
+\end{th}
+
+\section{Pour les formules}
+
+Le type des formules définis à l'aide de 3 constructeurs récursif (Ou,Et,Non) et 2 constructeurs non récursifs (Constante,Variable) \\
+Le théorème devient alors :
+\begin{th} \\
+    Soit $P$ un prédicat sur $\mathbb{F}$\\
+    On suppose : \\
+    \begin{itemize}
+        \item $\forall b \in B, P(Constante b)$
+        \item $\forall x \in \Sigma, P(Variable x)$
+        \item $\forall f \in \mathbb{F}, P(f)\Rightarrow P(Non f)$
+        \item $\forall f_1,f_2 \in \mathbb{F}, P(f_1)\land P(f_2)\Rightarrow P(f_1\land f_2)$
+        \item $\forall f_1,f_2 \in \mathbb{F}, P(f_1)\land P(f_2)\Rightarrow P(f_1 \lor f_2)$
+    \end{itemize}
+    Alors $\forall f \in \mathbb{F}, P(f)$
+\end{th}
+
+\begin{rq}
+    Les deux premiers points correspondent à l'initialisation et les trois derniers à l'hérédité
+\end{rq}
+
+\begin{ex}
+    Exercice 9
+\end{ex}
+
+\begin{dem}
+    Il faut faire une récurrence forte sur la hauteur de la formule
+    \begin{itemize}
+        \item Les deux premiers points prouvent que $P$ est vrai pour les formules de hauteur $0$
+        \item Les trois points suivant prouvent que $\forall n \in \mathbb{N}$, si $P$ est vrai pour toute formule de hauteur inférieur à $n$
+    \end{itemize}
+    alors $P$ est vrai pour toute formule de hauteur n+1
+\end{dem}
+
+\begin{rq}
+    \begin{itemize}
+        \item Une preuve par induction structurelle peut toujours être remplacée par une récurrence classique sur la hauteur
+        \item Le concept est le même que pour les arbres.
+    \end{itemize}
+\end{rq}
+
+\begin{ex} Exemple de rédaction : Exercice 9 \\
+    DEMAIN
+\end{ex}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

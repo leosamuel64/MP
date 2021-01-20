@@ -107,11 +107,11 @@ let plusLongue l1 l2=
   else l2
 ;;
 
-let sontEquivalente f g=
-  let variablesf = listeVariables f in
-  let variablesg = listeVariables g in
+let sontEquivalentes f g=
+  let variables = fusion_stricte ( listeVariables f) (listeVariables g) in
+
   
-  let contextes = listeContexte (plusLongue variablesf variablesg) in
+  let contextes = listeContexte variables in
 
   let rec aux contexte =
     match contexte with
@@ -121,6 +121,33 @@ let sontEquivalente f g=
   aux contextes
 ;;
 
-sontEquivalente exemple3 (Constante true);;
+sontEquivalentes exemple3 (Constante true);;
+
+(* Dernière variante : liste des contexte où f est vraie *)
+
+let contexte_verifiant f=
+  let variable = listeVariables f in
+  let contexte = listeContexte variable in
+  List.filter 
+  (fun c -> evaluation c f ) 
+  contexte
+;;
+
+
+
+(* Exercice 8 *)
+
+(* 1 *)
+
+(* (A=>A)=>A *)
+(* /(/A +A) + 1
+A/A+A
+0 + A
+A *)
+
+(* Alors ce n'est pas une tautologie *)
+
+(* Par contre (A => /A) => /A  en est une*)
+
 
 

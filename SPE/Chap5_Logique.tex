@@ -1,3 +1,5 @@
+\newtheorem{rmq}{Remarque}
+\newtheorem{defi}{Définition}
 \begin{document}
 \maketitle
 
@@ -12,10 +14,9 @@
     \item Et : $\land$
     \item Ou : $\lor$
 \end{itemize}
-\newline
 
-De plus, dans ce chapitre, on notera $B=\{\top,\bot\}$ \\
-Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
+De plus, dans ce chapitre, on notera $\mathcal{B}=\{\top,\bot\}$ \\
+L'ordre de priorité dans les calculs sera : $\lnot$,$\land$,$\lor$ \\
 
 \subsection{Règles de calcul}
 
@@ -41,7 +42,7 @@ Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
     Entre $\lor$, $\land$ et $\lnot$
     \begin{itemize}
         \item Distributivité ($\lor$ est distributif sur $\land$ et inversement contrairement aux nombres)
-        \item Loi de De Morgan : $\forall (a,b,c) \in B^3$
+        \item Loi de De Morgan : $\forall (a,b,c) \in \mathcal{B}^3$
             \begin{itemize}
                 \item $\lnot(a\land b)= \lnot a \lor \lnot b$
                 \item $\lnot(a\lor b)= \lnot a \land \lnot b$
@@ -50,9 +51,9 @@ Ordre de priorité dans les calculs : $\lnot$,$\land$,$\lor$ \\
 \end{prop}
 
 \begin{dem}
-    Montrons que $\forall (a,b,c) \in B^3, a\land(b\lor c)=(a\land b)\lor (a \land c)$ \\
+    Montrons que $\forall (a,b,c) \in \mathcal{B}^3, a\land(b\lor c)=(a\land b)\lor (a \land c)$ \\
     On étudie toutes les possibilités pour ($(a,b,c))$. Il y en a $8$ car $2^3=8$ \\
-    On les regroupe dans une table de vérité \\
+    On les regroupes dans une table de vérité \\
 
         \begin{tabular}{|l|l|l|l|l|l|l|l|}
         \hline
@@ -81,43 +82,47 @@ On utilise alors souvent :
     \item $+$
 \end{itemize}
 
-Dans ce cas, les loi de DE Morgan sont :
-\item Loi de De Morgan : $\forall (a,b,c) \in B^3$
+Attention dans ce cas, $1+1=1$
+
+Dans ce cas, les lois de De Morgan sont :
+\begin{th}
+Loi de De Morgan : $\forall (a,b,c) \in \mathcal{B}^3$
 \begin{itemize}
     \item $\overline{(a\land b)}= \overline a + \overline b$
     \item $\overline{(a + b)}= \overline a  \overline b$
 \end{itemize}
+\end{th}
 
-Attention dans ce cas, $1+1=1$
 
-\begin{rq}
+
+\begin{rmq}
     $(\mathbb{Z}/n\mathbb{Z},+,\cdot)$ est un corps. \\
     $(B,\lor,\land)$ n'est même pas un anneau car $1$ n'a pas d'opposé
-\end{rq}
+\end{rmq}
 
-\begin{rq}
-    Notons $\lxor$ le ou exclusif : \\
-    $1\lxor 1=0$
-    On peut vérifier que $(B,\lxor,\land)$ est un corps , isomorphe à $\mathbb{Z}/n\mathbb{Z}$
-\end{rq}
+\begin{rmq}
+    Notons $\oplus$ le ou exclusif : \\
+    $1\oplus 1=0$
+    On peut vérifier que $(B,\oplus,\land)$ est un corps , isomorphe à $\mathbb{Z}/n\mathbb{Z}$
+\end{rmq}
 
 \subsection{Autres connecteurs logiques}
-Combien y-a-t-il de fonction de $B$ dans $B$ ? \\
-Il y en a $|B|^{|B|}=4$ \\
+Combien y-a-t-il de fonction de $\mathcal{B}$ dans $\mathcal{B}$ ? \\
+Il y en a $|\mathcal{B}|^{|\mathcal{B}|}=4$ \\
 Il y a $id,\lnot,0,1$ \\
 
-Combien y-a-t-il de fonction de $B^2$ dans $B$ ?
+Combien y-a-t-il de fonction de $\mathcal{B}^2$ dans $\mathcal{B}$ ?
 Il y en a 16. Nous connaisons déja $\lor,\land,\lxor$
 
 Pour definir un opérateur, il suffit de donnée sa table de vérité
 
 \subsubsection{L'implication}
-\begin{def}
-    $\forall a,b \in B$, on note $a\Rightarrowb$ le booléen $b\lor\lnot a$
-\end{def}
+\begin{defi}
+    $\forall a,b \in \mathcal{B}$, on note $a\Rightarrow b$ le booléen $b\lor\lnot a$
+\end{defi}
 
 \begin{ex}
-    "Mange ta soupe ou va dans ta chambre"  by FP\\
+    "Mange ta soupe ou va dans ta chambre"  \copyright FP\\
     donne \\
     "Si tu ne mange pas ta soupe alors va dans ta chambre"\\
 \end{ex}
@@ -125,7 +130,8 @@ Pour definir un opérateur, il suffit de donnée sa table de vérité
 Interpretation en mathématiques :\\
 Table de vérité de $\Rightarrow$ :
 
-    \begin{tabular}{|l|l|l|}
+    \begin{tabular}{|l|l|l|} 
+    \hline
     $a$ & $b$ & $a\Rightarrow b$ \\ \hline
     0   & 0   & 1                \\ \hline
     0   & 1   & 1                \\ \hline
@@ -134,10 +140,10 @@ Table de vérité de $\Rightarrow$ :
     \end{tabular}
 
 
-Ainsi, la formule $\forall (a,b) in B^2, a \Rightarrow b$ est vraie si et seulement si a chaque fois que a est vrai, b l'est aussi. (Quand a est faux, b peut valoir n'importe quoi !)
+Ainsi, la formule $\forall (a,b) \in \mathcal{B}^2, a \Rightarrow b$ est vraie si et seulement si a chaque fois que a est vrai, b l'est aussi. (Quand a est faux, b peut valoir n'importe quoi !)
 
 Digressions : \\
-Un théorème est une formule $\forall x \in E, P(x) \Rightarrow Q(x)$ où $E$ est un ensemble et $P,Q$ des prédicats sur $E$. (fonctions de $E$ dans $B$)
+Un théorème est une formule $\forall x \in E, P(x) \Rightarrow Q(x)$ où $E$ est un ensemble et $P,Q$ des prédicats sur $E$. (fonctions de $E$ dans $\mathcal{B}$)
 Dans le cas où $P$ est faux, on a aucune informations sur $Q$. 
 
 Pour montrer q'un théorème est faux, il faut montrer
@@ -145,15 +151,15 @@ $\lnot(\forall x \in E, P(x) \Rightarrow Q(x))$ cad $\exists x \in E, \lnot(P(x)
 Ainsi, cela revient à trouver un $x\in E$ pour lequel l'hypothèse est vraie mais la conclusion est fausse. Un tel $x$ s'appelle un contre-exemple
 
 \subsubsection{Equivalents}
-\begin{def}
-    $\forall (a,b) \in B^2$, on note $a<\Rightarrowb$ le booléen $(a\Rightarrowb) \land (b\Rightarrowa)$
+\begin{defi}
+    $\forall (a,b) \in \mathcal{B}^2$, on note $a<\Rightarrowb$ le booléen $(a\Rightarrow b) \land (b\Rightarrow a)$
     C'est en réalité la même chose que $=$ pour les booléens
-\end{def}
+\end{defi}
 
 \subsubsection{Non-et}
-\begin{def}
-    $\forall (a,b) \in B^2,\lnot(a\land b)$ 
-\end{def}
+\begin{defi}
+    $\forall (a,b) \in \mathcal{B}^2,\lnot(a\land b)$ 
+\end{defi}
 
 Il est utilisé car il coute seulement 3 transistors. \\
 On peut definir les autres opérations à partir du non-et. (cf Exercice 9) \\
@@ -177,18 +183,17 @@ Voici un type pour représenter les formules logiques :
     fontsize=\footnotesize,
     linenos]
     {ocaml}
-    type formule =
-        | Variable of string
-        | Non of formule
-        | Et of (formule*formule)
-        | Ou of (formule*formule)
-        | Constante of bool
-        ;;
+type formule =
+  | Variable of string
+  | Non of formule
+  | Et of (formule*formule)
+  | Ou of (formule*formule)
+  | Constante of bool
+    ;;
 
     \end{minted}
 
     Ainsi l'exemple $\overline{a+b}\cdot c$ par :
-
 
 
 \begin{minted}[
@@ -199,7 +204,7 @@ Voici un type pour représenter les formules logiques :
     fontsize=\footnotesize,
     linenos]
     {ocaml}
-    let exemple 1 = Et(Non(Ou(Variable "a",Variable "b")),Variable "c");;
+let exemple 1 = Et(Non(Ou(Variable "a",Variable "b")),Variable "c");;
     \end{minted}
 
 Ce type est similaire à un type arbre.
@@ -212,15 +217,15 @@ Soit $\Sigma$ un ensemble dont les éléments seront appelés des "variable (boo
 \begin{itemize}
     \item $\forall x \in \Sigma,x$ est une formule
     \item $\forall b \in B,b$ est une formule
-    \item $\forall \text{ formule } f, \overline{f}$ est une formule
-    \item $\forall \text{ formules } f_1,f_2, f_1+f_2 \text{ et } f_1f_2$ sont des formules
+    \item $\forall$ formule $f, \overline{f}$ est une formule
+    \item $\forall$ formule $f_1,f_2, f_1+f_2$ et $f_1f_2$ sont des formules
 \end{itemize}
 
-\begin{exemple}\\
+\begin{ex}\\
     Soit $a,b,c \in B$\\
     $\overline{(a+b)}c$ est une formule\\
     $\lor \lor a$ n'est pas une formule\\
-\end{exemple} 
+\end{ex} 
 
 \subsection{Sémantique}
 
@@ -228,23 +233,23 @@ Donnons un sens aux formules abstraites définies ci-dessus.\\
 
 En pratique, on va définir des fonctions qui utilisent ces formules
 
-\begin{def}
+\begin{defi}
     Un contexte (ou distribution de vérité ou valuation) sur $\Sigma$ est une fonction de $\Sigma$ dans $B$.\\
-\end{def}
+\end{defi}
 
 Choisir un contexte sur $\Sigma$ revient à choisir la valeur de chaque variable.
 
-\begin{def}
-    Soit $\phi$ un contexte sur $\Sigma$. Notons $\mathbb{F}$ l'ensemble des formule sur $\Sigma$.\\
+\begin{defi}
+    Soit $\varphi$ un contexte sur $\Sigma$. Notons $\mathcal{F}$ l'ensemble des formule sur $\Sigma$.\\
 
-    On définit la fonction "Evaluation en $\phi$", qu'on note $E_v_{\phi}$\\
+    On définit la fonction "Evaluation en $\varphi$", qu'on note $E_v_{\varphi}$\\
     Ainsi:\\
-    $\forall b \ in B, E_v_{\phi}(b)=b$ \\
-    $\forall x \ in \Sigma, E_v_{\phi}(x)=\phi(x)$ \\
-    $\forall f in \mathbb{F},E_v_{\phi}(\lnot f)=\lnot E_v_{\phi}(f)$ \\
-    $\forall f_1,f_2 in \mathbb{F},E_v_{\phi}(f_1f_2)= E_v_{\phi}(f_1)E_v_{\phi}(f_2)$ \\
-    $\forall f_1,f_2 in \mathbb{F},E_v_{\phi}(f_1+f_2)= E_v_{\phi}(f_1)+E_v_{\phi}(f_2)$ \\
-\end{def}
+    $\forall b \ in B, E_v_{\varphi}(b)=b$ \\
+    $\forall x \ in \Sigma, E_v_{\varphi}(x)=\varphi(x)$ \\
+    $\forall f in \mathcal{F},E_v_{\varphi}(\lnot f)=\lnot E_v_{\varphi}(f)$ \\
+    $\forall f_1,f_2 in \mathcal{F},E_v_{\varphi}(f_1f_2)= E_v_{\varphi}(f_1)E_v_{\varphi}(f_2)$ \\
+    $\forall f_1,f_2 in \mathcal{F},E_v_{\varphi}(f_1+f_2)= E_v_{\varphi}(f_1)+E_v_{\varphi}(f_2)$ \\
+\end{defi}
 
 Pour représenter un contexte en Ocaml, utilisons un dictionnaire. Pour des exemples avec peu de variables, utilisons les listes d'association.\\
 
@@ -256,7 +261,7 @@ Pour représenter un contexte en Ocaml, utilisons un dictionnaire. Pour des exem
     fontsize=\footnotesize,
     linenos]
     {ocaml}
-    type contexte = (string * bool) list;;
+type contexte = (string * bool) list;;
     \end{minted}
 
 La fonction d'évaluation devient alors : \\ 
@@ -269,36 +274,158 @@ La fonction d'évaluation devient alors : \\
     fontsize=\footnotesize,
     linenos]
     {ocaml}
-    let rec evaluation contexte formule=
-        match formule with
-        | Constante b -> b
-        | Variable x -> List.assoc x contexte
-        | Non f ->not (evaluation contexte f)
-        | Ou (f1,f2) -> (evaluation contexte f1) || (evaluation contexte f2)
-        | Et (f1,f2) -> (evaluation contexte f1) && (evaluation contexte f2)
-    ;;
+let rec evaluation contexte formule=
+	match formule with
+	| Constante b -> b
+	| Variable x -> List.assoc x contexte
+	| Non f ->not (evaluation contexte f)
+	| Ou (f1,f2) -> (evaluation contexte f1) || (evaluation contexte f2)
+	| Et (f1,f2) -> (evaluation contexte f1) && (evaluation contexte f2)
+;;
     \end{minted}
 
-\subsection{Vocabualire}
+\subsection{Vocabulaire}
 
-Notons toujours $\mathbb{F}$ l'ensemble des formules. Notons $\mathbb{C} l'ensemble des contextes sur $\Sigma$
+Notons toujours $\mathcal{F}$ l'ensemble des formules. Notons $\mathcal{C}$ l'ensemble des contextes sur $\Sigma$
 
-\begin{def}
-    Soit $f \in \mathbb{F}$
+\begin{defi}
+    Soit $f \in \mathcal{F}$
     \begin{itemize}
-        \item On dit que $f$ est satisfiable lorsque $\exists \phi \in \mathbb{C} tq E_v_{\phi}(f)=\top$
-        \item On dit que $f$ est tautologique lorsque $\forall \phi \in \mathbb{C} tq E_v_{\phi}(f)=\top$
-        \item Soit $g \in mathbb{F}$. On dit que $f$ est équivalente à $g$ ($f\equiv g$) lorsque $E_v_{\phi}(f)=E_v_{\phi}(g)$
+        \item On dit que $f$ est satisfiable lorsque $\exists \varphi \in \mathcal{C} tq E_v_{\varphi}(f)=\top$
+        \item On dit que $f$ est tautologique lorsque $\forall \varphi \in \mathcal{C} tq E_v_{\varphi}(f)=\top$
+        \item Soit $g \in mathcal{F}$. On dit que $f$ est équivalente à $g$ ($f\equiv g$) lorsque $E_v_{\varphi}(f)=E_v_{\varphi}(g)$
     \end{itemize}
-\end{def}
+\end{defi}
 
 Ecrivons une fonction qui teste si une formule est satisfiable :\\
 
 Méthode naive : calculons la liste de tous les contextes :
 
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let rec listeVariables formule=
+	match formule with
+	| Constante b -> []
+	| Variable x -> [x]
+	| Non f -> listeVariables f
+	| Ou (f1,f2) -> fusion_stricte (listeVariables f1) (listeVariables f2)
+	| Et (f1,f2) -> fusion_stricte (listeVariables f1) (listeVariables f2)
+;;
+  
+let rec listeContexte listeVariables=
+	match listeVariables with
+	| [] -> [[]]
+	| t::q -> (List.map (fun x -> (t,false)::x) (listeContexte q))
+						@
+						(List.map (fun x -> (t,true)::x) (listeContexte q))
+;;
+
+let estSatisfiable formule=
+	let variables = listeVariables formule in
+	let contextes = listeContexte variables in
+	
+	let rec aux contexte =
+		match contexte with
+		| [] -> false
+		| t::q -> (evaluation t formule) || aux q
+	in
+	aux contextes
+;;
+
+let estTautologique formule=
+	let variables = listeVariables formule in
+	let contextes = listeContexte variables in
+	
+	let rec aux contexte =
+		match contexte with
+		| [] -> true
+		| t::q -> (evaluation t formule) && aux q
+	in
+	aux contextes
+;;
+
+let plusLongue l1 l2=
+  let a, b = List.length l1,List.length l2 in
+  if a > b then
+    l1
+  else l2
+;;
+
+let sontEquivalentes f g=
+  let variablesf = listeVariables f in
+  let variablesg = listeVariables g in
+  
+  let contextes = listeContexte (plusLongue variablesf variablesg) in
+
+  let rec aux contexte =
+    match contexte with
+    | [] -> true
+    | t::q -> ((evaluation t f)=(evaluation t g)) && (aux q)
+  in
+  aux contextes
+;;
+    \end{minted}
 
 
 
+
+
+
+
+
+
+
+
+\subsection{Formes normales}
+
+\begin{itemize}
+    \item Un minterme est vrai pour un seul contexte ($a\overline{b}c$ est vrai pour ${1,0,1}$)
+    \item Un maxterme est faux pour un et un seul contexte ($\overline a + \overline b + c$ est faux pour ${1,1,0}$)
+    \item La négation d'un minterme est un maxterme et réciproquement.
+    \item La forme normale disjonctive revient à la table de vérité de la formule
+\end{itemize}
+
+\begin{ex}
+    Soit $f=\overline{a\Rightarrow b} \lor c$\\
+    On a $f\equiv \overline{b}a+c$ \\
+    Ce n'est pas encore la forme normale car les deux monomes n'utilisent pas toutes les variables.\\
+
+    $f\equiv a\overline{b}c+a\overline{b}\overline{c}+abc+\overline{a}bc+\overline{a}\overline{b}c$ \\
+    Somme de cinq mintermes alors c'est une somme normale disjonctive\\
+    Chaque monomes indique un contexte où $f$ est vraie, autrement dit une ligne de la table de vérité\\
+\end{ex}
+
+\begin{itemize}
+    \item Le nombre de mintermes dans la formes normale disjonctive est le nombre de contextes où $f$ est vraie
+    \item Si on connait la table de vérité, on peutr retrouver la forme normale disjonctive
+    \item Une forme normale disjonctive est unique
+    \item Mettre deux formules $f$ et $g$ sous forme normale disjonctive est une méthode infaillble pour savoir si $f\equiv g$
+    \item Idem pour voir si $f$ est une tautologie ou satisfiable ...
+    \item La négation d'une forme normale disjonctive est un forme normale conjonctive
+    \item On peut alors partir d'une forme normale disjonctive de $f$ pour obtenir une forme normale conjonctive de $\overline f$
+    \item On part de la forme normale disjonctive de $\overline f$ pour avoir une forme normale conjonctif de $f$
+    \item Chaque maxterme s'appelle une clause
+    \item Le nombre de maxterme est le nombre de contexte ou f est fausse ($\bot$)
+\end{itemize}
+
+\section{Problème NP-complets}
+
+Ces fonctions permettent de résoudre de nombreux problemes
+
+
+Mais leurs complexités est supérieurs à $2^n$\\
+
+On n'a jamais découvert d'algorithme de complexité polynomial. Ce problème s'appelle "SAT"
+
+Deux problèmes sont équivalent si l'existence d'un algo de complexité polynomial pour l'un entraine l'existence d'un algo de complexité pour l'autre.\\
+
+Tout problème équivalent à SAT est appelé "NP-Complet" (cf exercice 12)
 
 
 
