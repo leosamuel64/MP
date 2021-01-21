@@ -150,4 +150,85 @@ A *)
 (* Par contre (A => /A) => /A  en est une*)
 
 
+type formuleExo9 = Var of string | Cte of bool | NonEt of formuleExo9*formuleExo9;;
+
+let rec vers_NonEt = function
+  | Constante b -> Cte b
+  | Variable x -> Var x
+  | Et(a,b) -> NonEt(NonEt(vers_NonEt a,vers_NonEt b),NonEt(vers_NonEt a,vers_NonEt b))
+  | Ou(a,b) -> NonEt(NonEt(vers_NonEt a,vers_NonEt a),NonEt(vers_NonEt b,vers_NonEt b))
+  | Non(a) -> NonEt(vers_NonEt a,vers_NonEt a)
+;;
+
+let exempleconvert = vers_NonEt exemple1;;
+
+
+(* Exercice 12 *)
+
+type trileen = Vrai | Faux | Indetermine;;
+type formule_12 = Var12 of int | Et12 of formule_12*formule_12 | Ou12 of formule_12*formule_12 | Non12 of formule_12;;
+
+let ou a b =
+  match a,b with
+  | Faux,Faux -> Faux
+  | Vrai,_ -> Vrai
+  | _, Vrai -> Vrai
+  | _ -> Indetermine
+;;
+
+let et a b=
+  match a, b with
+  | Vrai,Vrai -> Vrai
+  | Faux,_-> Faux
+  | _,Faux -> Faux
+  | _ -> Indetermine
+;;
+
+let not a=
+  match a with
+  | Vrai -> Faux
+  | Faux -> Vrai
+  | Indetermine -> Indetermine
+;;
+
+
+let rec eval_paresseuse f v=
+  match f with
+  | Var12 b -> v.(b)
+  | Et12 (a,b) -> let valeurdef = eval_paresseuse f v in
+                  if valeurdef = Faux then Faux
+                  else et (eval_paresseuse a v) (eval_paresseuse b v)
+  | Ou12 (a,b) -> let valeurdef = eval_paresseuse f v in
+                  if valeurdef = Vrai then Vrai
+                  else ou (eval_paresseuse a v) (eval_paresseuse b v)
+  | Non12 a -> not (eval_paresseuse a v)
+;;
+
+let test = Non12(Et12(Var12 0,Non12(Var12 1)));;
+let contexte_test = [|Vrai;Faux;Indetermine|];;
+
+type lit = V of int | F of int;;
+
+let estSatisfiable12 f n=
+  let tab = Array.make (n+1) Indetermine in
+  let rec aux f=
+    match f with
+    | [] -> true
+    | V i::q when tab.(i)=Faux -> false
+    | F i::q when tab.(i)=Vrai -> false
+    | V i::q -> tab.(i)<-Vrai; aux q
+    | F i::q -> tab.(i)<-Faux; aux q
+  in aux f
+;;
+
+let l = [V 0;V 1;F 2;F 1];;
+
+estSatisfiable12 l 2;;
+
+let estSatisfiable12_2 f n =
+  let valu = Array.make n Indetermine in
+  let aux i = 
+    (* fixe var i a vrai et fait un appelle rec *)
+
+  (* Pour lundi : Essayer de le finir ! *)
 
