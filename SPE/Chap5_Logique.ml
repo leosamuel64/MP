@@ -225,10 +225,40 @@ let l = [V 0;V 1;F 2;F 1];;
 
 estSatisfiable12 l 2;;
 
-let estSatisfiable12_2 f n =
-  let valu = Array.make n Indetermine in
-  let aux i = 
-    (* fixe var i a vrai et fait un appelle rec *)
+let fils noeud n=
+  let lenNoeud = Array.length noeud in
+  if lenNoeud < n then
+    (
+    let n1,n2 = Array.make (lenNoeud+1) Faux,Array.make (lenNoeud+1) Faux in
+    for i=0 to lenNoeud-1 do
+      n1.(i) <- noeud.(i);
+      n2.(i) <- noeud.(i);
+    done;
+    n1.(lenNoeud) <- Faux;
+    n2.(lenNoeud) <- Vrai;
+    [n1;n2];
+    )
+  else
+    [];
+;;
 
-  (* Pour lundi : Essayer de le finir ! *)
+fils [|Vrai;Vrai;Faux|] 3;;
 
+let rec existe p noeud n=
+  let len = Array.length noeud in
+  if len < n then
+    (
+    let listeFils = fils noeud n in
+      match listeFils with
+      | [a;b] -> ou (existe p a n) (existe p b n)
+      | _ -> failwith "Error"
+    )
+  else 
+    p noeud
+;;
+
+let estSatisfiable12V2 p n=
+  existe p [||] 10
+  ;;
+  
+  
