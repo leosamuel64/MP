@@ -261,4 +261,9 @@ let estSatisfiable12V2 p n=
   existe p [||] 10
   ;;
   
+
+let predicat a=
+  Indetermine;;
+
+estSatisfiable12V2 predicat 10;;
   

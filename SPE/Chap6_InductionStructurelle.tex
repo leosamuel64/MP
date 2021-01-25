@@ -1,8 +1,8 @@
 \begin{document}
-
+\maketitle
 Il s'agit d'une variante de la récurrence.
 
-\section{Récurrence classique sur $\mathbb N$}
+\section{Récurrence classique sur les entiers}
 
 $\mathbb{N}$ peut etre définis par 
 
@@ -17,7 +17,7 @@ $\mathbb{N}$ peut etre définis par
 type entier_nat = 0 | succ of entier_nat;; 
 \end{minted}
 
-\begin{th}
+\begin{thr}
     Théorème de récurrence : \\
     On suppose :
     \begin{itemize}
@@ -25,32 +25,28 @@ type entier_nat = 0 | succ of entier_nat;;
         \item $\forall n \in \mathbb{N}, P(n)\Rightarrow P(n+1)$
     \end{itemize}
     Alors $\forall n \in \mathbb{N}, P(n)$
-\end{th}
+\end{thr}
 
 \section{Pour les formules}
 
 Le type des formules définis à l'aide de 3 constructeurs récursif (Ou,Et,Non) et 2 constructeurs non récursifs (Constante,Variable) \\
 Le théorème devient alors :
-\begin{th} \\
-    Soit $P$ un prédicat sur $\mathbb{F}$\\
+\begin{thr} \\
+    Soit $P$ un prédicat sur $\mathcal{F}$\\
     On suppose : \\
     \begin{itemize}
-        \item $\forall b \in B, P(Constante b)$
-        \item $\forall x \in \Sigma, P(Variable x)$
-        \item $\forall f \in \mathbb{F}, P(f)\Rightarrow P(Non f)$
-        \item $\forall f_1,f_2 \in \mathbb{F}, P(f_1)\land P(f_2)\Rightarrow P(f_1\land f_2)$
-        \item $\forall f_1,f_2 \in \mathbb{F}, P(f_1)\land P(f_2)\Rightarrow P(f_1 \lor f_2)$
+        \item $\forall b \in B, P(\text{Constante } b)$
+        \item $\forall x \in \Sigma, P(\text{Variable } x)$
+        \item $\forall f \in \mathcal{F}, P(f)\Rightarrow P(\lnot f)$
+        \item $\forall f_1,f_2 \in \mathcal{F}, P(f_1)\land P(f_2)\Rightarrow P(f_1\land f_2)$
+        \item $\forall f_1,f_2 \in \mathcal{F}, P(f_1)\land P(f_2)\Rightarrow P(f_1 \lor f_2)$
     \end{itemize}
-    Alors $\forall f \in \mathbb{F}, P(f)$
-\end{th}
+    Alors $\forall f \in \mathcal{F}, P(f)$
+\end{thr}
 
-\begin{rq}
+\begin{rmq}
     Les deux premiers points correspondent à l'initialisation et les trois derniers à l'hérédité
-\end{rq}
-
-\begin{ex}
-    Exercice 9
-\end{ex}
+\end{rmq}
 
 \begin{dem}
     Il faut faire une récurrence forte sur la hauteur de la formule
@@ -61,77 +57,38 @@ Le théorème devient alors :
     alors $P$ est vrai pour toute formule de hauteur n+1
 \end{dem}
 
-\begin{rq}
-    \begin{itemize}
+\begin{rmq} Structure\\ 
+    \begin{itemize} \\
         \item Une preuve par induction structurelle peut toujours être remplacée par une récurrence classique sur la hauteur
         \item Le concept est le même que pour les arbres.
     \end{itemize}
-\end{rq}
+\end{rmq}
+\newpage
 
 \begin{ex} Exemple de rédaction : Exercice 9 \\
-    DEMAIN
+    $\forall f \in \mathcal{F}$, notons $P(f)=$"f est équivalente à une formule n'utilisant que des constantes, variables et des $\overline{\land}$ \\
+    
+    Initialisation : On traite les constructeurs non recursifs\\
+        \begin{itemize}
+            \item Soit $f$ une variable, $f \equiv f$
+            \item Soit $f$ une constante, $f\equiv f$
+        \end{itemize}
+    \newline
+    Hérédité : On traite les constructeurs récursifs\\
+    \newline
+        Soit $f \in \mathcal{F}$ tq $P(f)$ \\
+        
+        Montrons $P(\lnot f)$ : Par $P(f), \exists f' \in \mathcal{F}, f\equiv f'$ alors $\lnot f \equiv f' \overline{\land} f'$ \\
+        \newline
+        D'après $P(f),\exists f',g' \in \mathcal{F} \text{ tq } f'\equiv f, g'\equiv g$\\
+        \begin{itemize}
+            \item $f \land g \equiv (f' \overline{\land} g')\overline{\land}(f' \overline{\land} g')$
+            \item $f \lor g \equiv (f' \overline{\land} f')\overline{\land}(g' \overline{\land} g')$
+        \end{itemize}
+
+Alors  $\forall f \in \mathcal F, f$ est equivalente à une formule n'utilisant que des constantes, des variables et des $\overline{\land}$
+
 \end{ex}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
