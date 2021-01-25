@@ -1,0 +1,62 @@
+\begin{document}
+
+    \section{Exemples introductifs}
+    Ecrivons un programme pour chercher le mot "info" dans un texte. L'algo naif à déjà été vu en MPSI.
+    Il a une complexité en $O(|\text{texte}|\cdot |\text{mot|})$. \\
+
+    Si le teste échoue à la 4^{ième} lettre, on peut reprendre la recherche à la 4_{ième} lettre 
+    et pas de 0 \\
+
+    Voici une méthode plus efficace : \\
+    \begin{itemize}
+        \item Lire une seul fois le texte et garder en mémoire où on en est du mot
+    \end{itemize}
+
+    Pour ce faire, utilisons le graphe suivant : \\
+    [Image graphe]\\
+
+    Mode d'emploi :
+    \begin{itemize}
+        \item Partir du sommet indiqué par une flèche sans sommet de départ
+        \item lire le texte lettre après lettre et suivre les flèches
+        \item A la fin de la lecture, si on est au sommet 4, c'est que le texte contenait "info"
+    \end{itemize}
+
+    L'exemple ci dessus est simple car "info" n'a pas de lettre en double. Voyons comment appliquer la méthode au mot "infini".\\
+
+    [Image Graphe]\\
+
+    Les graphes utilisé sont des "automates". L'état signalé par une flèche est dit "initial". Le ou les 
+    états signalés par 0 sont dit "acceptant" ou "terminaux"
+
+    \section{Programmation d'un automate fini déterministe}
+
+On définie le type suivant :
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+type automate = { initial : int; 
+                  finals : int list; 
+                  transitions : (int*char) list array}
+                ;;
+    \end{minted}
+
+
+
+
+
+
+
+
+    
+\end{document}
+
+
+
+

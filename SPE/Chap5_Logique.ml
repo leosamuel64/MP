@@ -192,20 +192,10 @@ let not a=
 ;;
 
 
-let rec eval_paresseuse f v=
-  match f with
-  | Var12 b -> v.(b)
-  | Et12 (a,b) -> let valeurdef = eval_paresseuse f v in
-                  if valeurdef = Faux then Faux
-                  else et (eval_paresseuse a v) (eval_paresseuse b v)
-  | Ou12 (a,b) -> let valeurdef = eval_paresseuse f v in
-                  if valeurdef = Vrai then Vrai
-                  else ou (eval_paresseuse a v) (eval_paresseuse b v)
-  | Non12 a -> not (eval_paresseuse a v)
-;;
-
 let test = Non12(Et12(Var12 0,Non12(Var12 1)));;
-let contexte_test = [|Vrai;Faux;Indetermine|];;
+let contexte_test = [|Vrai;Faux|];;
+
+eval_paresseuse test contexte_test;;
 
 type lit = V of int | F of int;;
 
@@ -267,3 +257,66 @@ let predicat a=
 
 estSatisfiable12V2 predicat 10;;
   
+(* Soient v_0,...,v_{n-1} les variables *)
+
+
+
+let rec eval_paresseuse contexte f =
+	match f with
+	|Var12 x -> contexte.(x)
+	|Non12 f -> not (eval_paresseuse contexte f)
+	|Et12 (f,g) when (eval_paresseuse contexte f) = Faux -> Faux
+	|Et12 (f,g) -> et (eval_paresseuse contexte f) (eval_paresseuse contexte g)
+	|Ou12 (f,g) when (eval_paresseuse contexte f) = Vrai -> Vrai
+	|Ou12 (f,g) -> ou (eval_paresseuse contexte f) (eval_paresseuse contexte g)
+	;;
+
+let satisfiable_backtracking f n=
+  (* n : Nombre de variable dans f *)
+  let contexte = Array.make n Indetermine in
+  
+  let rec aux i =
+    (* i : prochaine variable à assigner *)
+    (* precondition : contexte.(0:i) déjà remli *)
+    (* Renvoie un booléen qui indique si on peut terminer de remplir ce contexte pour obtenir un contexte qui satisfait f *)
+    if i = n then
+      (eval_paresseuse contexte f ) = Vrai
+    else
+    (
+      (parcourt_fils i Vrai)
+      ||
+      (parcourt_fils i Faux)
+    )
+  and parcourt_fils i valeur=
+    (* assigner valeur à la variable i *)
+    contexte.(i) <- valeur;
+    aux (i+1)
+  in
+    (aux 0), contexte
+;;
+
+
+let test = Non12(Et12(Var12 0,Non12(Var12 1)));;
+
+satisfiable_backtracking test 2;;
+
+let satisfiable_backtracking f n=
+  (* n : Nombre de variable dans f *)
+  let contexte = Array.make n Indetermine in
+  
+  let rec aux i =
+    (* i : prochaine variable à assigner *)
+    (* precondition : contexte.(0:i) déjà remli *)
+    (* Renvoie un booléen qui indique si on peut terminer de remplir ce contexte pour obtenir un contexte qui satisfait f *)
+      match eval_paresseuse contexte f with
+      | Vrai -> true
+      | Faux -> false
+      | Indetermine -> (parcourt_fils i Vrai) || (parcourt_fils i Faux)
+    
+  and parcourt_fils i valeur=
+    (* assigner valeur à la variable i *)
+    contexte.(i) <- valeur;
+    aux (i+1)
+  in
+    (aux 0), contexte
+;;
