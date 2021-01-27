@@ -33,7 +33,7 @@ let a_infini =
                   ('i',4)::defaut;
                   ('n',5)::('i',1)::defaut;
                   ('i',6)::('f',3)::defaut;
-                  defaut
+                  tout_vers 6 alphabetLatin
                 |]
   }
 ;;
@@ -45,24 +45,34 @@ let delta i x a=
       x : une lettre
       i : un état de a
   *)
-  List.assoc x a.transitions.(i)
+  List.assoc x (a.transitions.(i))
 ;;
 
 
 
-let delta_etoile i m a=
-  (* m : chaine de char *)
+let delta_etoile i m a =
+  (* Cette fois m est une chaine de caracteres.
+      Renvoie l'etat atteint apres lecture de toutes les lettres de m *)
   
-  let rec boucle q k=
-    (*  k : prochaine lettre 
-        q : état actuel
-    *)
-    if k = String.length m then
-      q
-    else
-      boucle (delta k m.[k] a) (k+1)
-    in 
-    boucle i 0
-  ;;
+  let rec boucle q k =
+      (* k : prochaine lettre de m à lire
+          q : etat actuel *)
+          if k = String.length m then
+              q
+          else
+              boucle (delta q m.[k] a ) (k+1)
+  in 
+  boucle i 0
+;;
+
+delta_etoile a_infini.initial "gvgfvgdivfqinfinisdbjhfbjhdbfq" a_infini;;
 
 (* Pour jeudi, faire la fonction qui renvoie un booléen *)
+
+let reconnu m a =
+  List.mem (delta_etoile a.initial m a ) a.finals
+;;
+
+reconnu "eygoihdbddfazaginfiddfinfiniigoihagoze" a_infini;;
+
+reconnu "eygoihdbddfazaginfiddfinfteriniigoihagoze" a_infini;;
