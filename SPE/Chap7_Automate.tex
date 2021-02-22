@@ -45,17 +45,326 @@ type automate = { initial : int;
                   finals : int list; 
                   transitions : (int*char) list array}
                 ;;
-    \end{minted}
+\end{minted}
 
+% Programmation de Infini
 
+\section{Vocabulaire sur les languages}
 
+Soit $\Sigma$ un ensemble qu'on appelle "alphabet"\\
 
+\begin{itemize}
+    \item Un élément de $\Sigma$ s'appelle une lettre
+    \item Une suite finie de lettres s'appelle un mot
+    \item Le mot vie est noté $\epsilon$
+    \item La concatenation des mots est noté $\cdot$
+    \item On note $\Sigma*$ l'ensemble des mots sur $\Sigma$
+    \item $\forall u \in \Sigma*, |u|$ est la longueur de u, son nombre de lettre
+    \item On note $\forall n \in \mathbb{N}, \Sigma^n$ l'ensemble des mots de $n$ lettres
+    \item On identifie les mot de une lettre avec les lettres cad $\Sigma = \Sigma^1$
+    \item Un ensemble de mot s'appelle un langage
+\end{itemize}
 
+\begin{prop} $\cdot$
+    \begin{itemize}
+        \item Associatif : $\forall u,v,w \in \Sigma, (u\code v)\cdot w = u\code (v\cdot w)$
+        \item Neutre : $\epsilon$
+        \item Pas Commutatif dans la plupart des cas
+        \item $\forall u,v \in \Sigma, |u \cdot v| = |u| + |v|$
+        \item $\forall u,v \in \Sigma*, u=v <=> |u|=|v| \land \forall i \in [[0,|u|[[, u_i=v_i$
+    \end{itemize}
+\end{prop}
 
+\begin{defi}
+    Soit $u,v \in \Sigma*,$\\
+    \begin{itemize}
+        \item On dit que u est un préfixe de $v$ lorsque $\exists w \in \Sigma*, v=u\cdot w$
+        \item On dit que u est un suffixe de $v$ lorsque $\exists w \in \Sigma*, v=w\cdot u$
+    \end{itemize}
+\end{defi}
 
+\section{Définition d'un automate (fini déterministe)}
 
+\begin{defi}
+    Un automate fini déterministe complet sur $\Sigma$ est un quadruplet formé de
+    \begin{itemize}
+        \item Un ensemble $\mathcal{Q}$ appelé ensemble des états
+        \item Un état paticulier $i \in \mathcal{Q}$ appelé l'état initial
+        \item Un ensemble d'états $\mathcal{F} \inset \mathcal{Q}$ appelé ensemble des états finals
+        \item Une fonction $\delta : \mathcal{Q}*\Sigma \rightarrow \mathcal{Q}$ appelé fonction de transitions
+    \end{itemize}
+\end{defi}
+
+\begin{rmq}
+    Dans le type Ocaml, on utiise un tableau de liste d'association pour enregistrer les transition
+\end{rmq}
+
+\begin{defi}
+    Soit $(\mathcal{Q},i,\mathcal{F},\delta)$ un AFDC. On définie sa fonction de transition par récurrence, ainsi:
+    $\delta* : \mathcal{Q}*\Sigma^* \rightarrow \mathcal{Q}$ vérifie : \\
+    \begin{itemize}
+        \item $\forall q \in \mathcal{Q}, \delta^*(q,\epsilon)=q$
+        \item $\forall q \in \mathcal{Q}, \forall x \in \Sigma, \forall m \in \Sigma^*,\delta^*(q,mx)=\delta(\delta^*(q,m),x)$
+    \end{itemize}
+\end{defi}
+
+\begin{prop}
+    Soit $(\mathcal{Q},i,\mathcal{F},\delta)$ un AFDC.\\
+    $\forall q \in \mathcal{Q}, \forall(m_1,m_2)\in \Sigma^2, \delta^*(q,m_1m_2)=\delta^*(\delta^*(q,m_1),m_2)$
+\end{prop}
+
+\begin{dem}
+    (Récurrence sur la longueur de $m_2$)\\
+    On fixe un $m_1 \in \Sigma^*$\\
+    $\forall n \in \mathbb{N}, P_n$:"$\forall m_2 \in \Sigma^*,\delta^*(q,m_1m_2)= \delta^*(\delta^*(q,m_1),m_2)$"
+
+    Initialisation : Soit $m_2 \in \Sigma^0, \delta^*(\delta^*(q,m_1),\epsilon) = \delta^*(q,m_1)$
+    Hérédité : Soit $n \in \mathbb{N}$. Supposons $P_n$.\\
+    Soit $m_2\in \Sigma^{n+1}$\\
+    Soit $n_2\in \Sigma^{n}, x \in \Sigma, m_2=n_2x$\\
+    $\delta^*(\delta^*(q,m_1),m_2)$\\
+    $=\delta^*(\delta^*(q,m_1),n_2x)$\\
+    $=\delta(\delta^*(\delta^*(q,m_1),n_2),x)$\\
+    $=\delta(\delta^*(q,m_1n_2),x)$\\
+    $=\delta(q,m_1m_2x)$\\
+
+    $\forall m_2 \in \Sigma^*,\delta^*(q,m_1m_2)= \delta^*(\delta^*(q,m_1),m_2)$\\
+\end{dem}
+
+\begin{rmq}
+    On note $q.m$ pour $\delta^*(q,m)$
+    Alors $\forall q \in \mathcal{Q},\forall m_1,m_2 \in \Sigma, (q.m_1).m_2=q.(m_1\cdot m_2)$
+\end{rmq}
+
+\begin{defi}
+    Language reconnu par un automate\\
+    Soit $(\mathcal{Q},i,\mathcal{F},\delta)$ un AFDC que l'on note $\mathcal{A}$.\\
+    \begin{itemize}
+        \item $\forall m \in \Sigma^*$, on dit que m est reconnu par $\mathcal{A}$ lorsque $\delta^*(i,m) \in \mathcal{F}$
+        \item On appelle langage reconnu par $\mathcal{A}$ l'ensemble des mots reconnu par $\mathcal{A}$
+    \end{itemize}
+\end{defi}
+
+% Finir l'exo 10
+
+\section{Opérations sur les langages}
+
+On définit quelques opérations sur les langages
+On connait deja $cup et inter, \ $. On notera plus tard $+$ à la place de $cup$\\
+
+\begin{defi} concatenation de language
+    Soient $L_1$ et $L_2$ deux langage. On pose $L_1L_2=\{m_1m_2;m_1 \in L_1, m_2 \in l_2\}$
+\end{defi}
+
+\begin{ex}
+    $\{ga,bu}\cdot {zo,meu}={gazo,gameu,buzo,bumeu}$    
+\end{ex}
+
+\begin{defi} Point et étoile
+    \begin{itemize}
+        \item $forall langage L \forall n \in \mathbb N, L^n=L.L.L...L$
+        \item $L^*=\cup(n\in\mathbb N) L^n$
+    \end{itemize}
+\end{defi}
+
+\begin{prop} de $\cdot$\\
+    \begin{itemize}
+        \item associatif
+        \item neutre $\{\epsilon\}$
+        \item Distributif sur $\cup$ : $\forall L,M,N$ trois langages, $L\cdot (M \cup N) = L\cdot M \cup L\cdot N$ et $(L\cup M) \cdot N) = M\cdot L \cup N\cdot L$
+    \end{itemize}
+\end{prop}
+
+\begin{dem}
+Premiere égalité : Soit $m\in L\cdot M \cup L \cdot N$\\
+Traitons le cas $m \in L\cdot M$\\
+Donc $\exists x \in L, y\in M,m=x\cdot y$
+Donc $l\in L\cdot(M\cup N)$
+
+Soit $m \in L\cdot(M\cup N)$\\
+Donc $\exists x \in L,\exists y \in M \cup N, m=x\cdot y$ alors $m \in L\cdot M \cup L\cdot N$
+\end{dem}
+
+\begin{rmq}
+    Dans ce chapitre, on note parfois $+$ au lieu de $\cup$. De plus, le neutre pour $+$ sera $\emptyset$
+\end{rmq}
+
+\begin{prop}
+    \begin{itemize}
+        \item $\forall \text{ langages } L, (L^*)^*=L^*$
+        \item $\forall L,M\in \mathcal{P}(\Sigma^*), L\incl M \Rightarrow L^*\incl M^*$. On dit que $*$ est croissante
+    \end{itemize}
+\end{prop}
+
+\begin{dem}
+    Supposons $L\incl U$\\
+    Soit $m\in L^*$, $\exists p \in \mathbb{N}, (l_1,\dots,l_p)\in L^p$ tq
+    $m=l_1l_2\dots l_p$\\
+
+    Or $\forall i \in [[1,p]], l_i \in L \incl M$
+    Donc $m \in M^*$
+\end{dem}
     
+\begin{defi} Langage régulier\\
+    Un langage est dit régulier lorsqu'il peut être décrit à l'aide d'un nombre fini d'opérations :
+    \begin{itemize}
+        \item $+$ ou $\cup$
+        \item $\cdot$
+        \item $*$
+        \item $\emptyset$
+        \item $\epsilon$
+        \item Les singletons $\{x\}$ pour $x \in \Sigma$ 
+    \end{itemize}
+\end{defi}
+
+Une telle formule est appelé une expression régulière (cf suite du cours)\\
+
+\begin{rmq}
+    Il n'y à pas de $\cap$ ni de complémentaire dans cette définition
+\end{rmq}
+
+\begin{ex}
+    \begin{itemize}
+        \item Ensemble des texte contenant le mot info : $\Sigma^*\cdot \text{info}\cdot \Sigma^*$
+        \item Soit $\Sigma = \{a,b\}$. Ensemble des mots contenant deux a: $b^*ab^*ab^*$
+    \end{itemize}
+\end{ex}
+
+\begin{rmq}
+$\forall x \in \Sigma$, on notera $x$ au lieu de $\{x\}$
+\end{rmq}
+
+\section{Automate incomplet}
+
+\subsection{Définition}
+
+La définition d'un AFD incomplet est la même que celle d'un AFD complet sauf que la fonction de transition
+$\delta$ n'est pas définie sur $\mathcal{Q}*\Sigma$ \\
+
+Un couple $(q,x) \in \mathcal{Q}*\Sigma$ où $\delta$ n'est pas définie s'appelle un blocage\\
+
+La fonction de transition étendue $\delta^*$  est alors défine seulement sur une partie de $\mathcal{Q}*\Sigma$\\
+Un mot $m\in \Sigma^*$ est reconnu lorsque
+\beginmatrix
+$(i,m)\in D_{\delta^*}$
+$\delta*(i,m)\in \mathcal{F}$
+
+\begin{exemple}
+    AFD non complet pour reconnaitre l'ensemble des numéros de téléphone 
+    \begin{itemize}
+        \item Si on lit autre chose qu'un chiffre, c'est un blocage
+        \item Si on lit plus de 10 chiffre, c'est encore un blocage
+    \end{itemize}
+\end{exemple}
+
+Un automate incomplet est alors
+\begin{itemize}
+    \item Plus pratique à dessiner
+    \item Plus clair
+    \item Moins gourmant en mémoire et en temps : Les listes d'association sont plus courte et le programme peut s'arreter avant la fin
+\end{itemize}
+
+\subsection{Programmation}
+
+INSERT CODE
+
+\subsection{Complétion}
+
+Dans certain cas, on a besoin de completer un automate incomplet.
+
+\begin{thr}
+    Soit $(\mathcal{Q},i,\mathcal{F},\delta)$ un AFD qu'on note $\mathcal{A}$
+
+On définit un nouvel automate $\mathcal{A}'$ ainsi
+\begin{itemize}
+    \item Soit $p$ un nouvel état et $\mathcal{Q}'=\mathcal{Q}\cup\{p\}$
+    \item On garde $i$ et $\mathcal{F}$
+    \item On garde les transitions de $\mathcal{A}$
+    \item On rajoute $\forall (q,x)\in \mathcal{Q}*\Sigma$ blocage dans $\mathcal{A}$ $q$->$p$ et $p$->$p$
+\end{itemize}
+
+Alors $\mathcal{A}'$ est complet et il reconnait le même langage que $\mathcal{A}$
+
+\end{thr}
+
+\begin{dem}
+    [Indirecte] Soit $m\in\mathcal{L}(\mathcal{A})$. Soit $c$ le chemin de $\mathcal{A}$ étiqueté par
+    $m$. Ce chemin existe aussi dans $\mathcal{A}'$. Donc $m$ est reconnu par $\mathcal{A}'$
+
+    [Directe] Soit $m\in\mathcal{L}(\mathcal{A}')$Soit $c$ un chemin dans $\mathcal{A}'$ étiqueté par $m$, de
+    $i$ à un certain $q_f$.\\
+    
+    $c$ ne passe pas par $p$ sans quoi il finirait à $p$ or $q_f\not= p$ car $p\not\in \mathcal{F}$\\
+    Donc toutes les transitions emprunté par $c$ existent dans $\mathcal{A}$\\
+    Donc $c$ est un chemin de $\mathcal{A}$
+\end{dem}
+
+\begin{cor}
+    L'ensemble des language reconnaissable par un AFD complet est le même que l'ensemble des language reconnaissable par un AFD pas forcément complet
+\end{cor}
+
+\section{Automate émondé}
+
+But : "alleger" un automate en suprimant des états inutiles
+
+\subsection{Définitions}
+
+\begin{definition}
+    Soit $(\mathcal{Q},i,\mathcal{F},\delta)$ un AFD qu'on note $\mathcal{A}$\\
+    \begin{itemize}
+        \item $\forall q \in \mathcal{Q}, q$ est dit accessible lorsque $\exists m \in \Sigma^*$ tq $\delta^*(i,m)=q$
+        \item $\forall q \in \mathcal{Q}, q$ est dit co-accessible lorsque $\exists m \in \Sigma^*$ tq $\delta^*(i,m) \in \mathcal{F}$
+        \item $\mathcal{A}$ est dit "émondé" lorsque tous ses états sont accessible et co-accessible
+    \end{itemize}
+\end{definition}
+
+On pourrait qualifier d'inutile tout état non accessible ou non co-accessible\\
+
+\subsection{Emondage}
+
+\begin{proposition}
+    Soit $(\mathcal{Q},i,\mathcal{F},\delta)$ un AFD qu'on note $\mathcal{A}$\\
+    Soit $\mathcal{Q}_é$ l'ensemble des états accessibles et co-accessibles\\
+    Soit $\delat_é$ la restriction de $\delta$ à $\mathcal{Q}_é$\\
+
+    Soit $(\mathcal{Q}_é,i,\mathcal{F}\cap \mathcal{Q}_é,\delta_é)$ un AFD qu'on note $\mathcal{A}_é$\\
+    Alors $\mathcal{A}_é$ est émondé et $\mathcal{L}(\mathcal{A})=\mathcal{L}(\mathcal{A}_é)$
+\end{proposition}
+
+Ainsi quand on a obtenu un AFD qui reconnait un certain langage, on a presque toujours intérêt à l'émonder
+pour obtenir un automate plus simple reconnaissant le même langage.\\
+
+\begin{dem}
+    - Montrons que $\mathcal{A}_é$ est émondé. Cad montrons que les états de $\mathcal{A}_é$ sont accessibles et co-accessible
+    dans $\mathcal{A}_é$ (sachant qu'ils le sont dans $\mathcal{A}$)\\
+    Soit $q\in \mathcal{Q}_é$. Donc $q$ est accessible et co-accessible\\
+    Donc $\exists \gamma$ chemin dans $\mathcal{A}$ qui part de $i$ et arrive à un état de $\mathcal{F}$.\\
+    Tous les états le long de $\gamma$ sont accessibles et co-accessibles donc sont encore dans $\mathcal{Q}_é$
+    Donc $\gamma \incl \mathcal{Q}_é$. Donc $q$ est accessible et co-accessible dans $\mathcal{A}_é$
+    Donc $\mathcal{A}_é$ est émondé
+
+    - Montrons que $\mathcal{L}(\mathcal{A})=\mathcal{L}(\mathcal{A}_é)$\\
+    Soit $m\in =\mathcal{L}(\mathcal{A}_é)$ Soit $\gamma$ un chemin acceptant dans $\mathcal{A}_é$ étiqueté par $m$. Alors $\gamma$ est aussi un chemin acceptant dans $\mathcal{A}$\\
+    Donc $m \in \mathcal{L}(\mathcal{A})$\\
+
+    Soit $m \in =\mathcal{L}(\mathcal{A})$. Soit $\gamma$ un chemin acceptant dans $\mathcal{A}$ étiqueté par $m$\\
+    Avec le même raisonnement, $m \in \mathcal{L}(\mathcal{A}_é)$
+\end{dem}
+
+\subsection{Programmation}
+
+\begin{itemize}
+    \item Trouver les sommets accessibles $\rightarrow$ il suffit delancer un parcours de graphe depuis le sommet initial
+    \item Trouver les sommets co-accessibles \begin{itemize}
+        \item Créer un tableau coaccessible, initialement rempli de false
+        \item rajouter en argument le chemin parcouru pour arriver au sommet actuel
+    \end{itemize}
+\end{itemize}
+
+
 \end{document}
+
+
 
 
 
