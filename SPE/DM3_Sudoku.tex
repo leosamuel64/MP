@@ -1,0 +1,476 @@
+\begin{document}
+\maketitle
+\section{Présentation du jeu de sudoku}
+\subsection{Préliminaires}
+
+\textbf{Question 1 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let rec appartient x l =
+  match l with
+  | [] -> false
+  | t::_ when t=x -> true
+  | t::q -> appartient x q
+;;
+\end{minted}
+
+\textbf{Question 2 :}\newline
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let rec suppression x l=
+  match l with
+  | [] -> []
+  | t::q when t=x -> suppression x q
+  | t::q -> t::(suppression x q)
+;;
+\end{minted}
+
+\textbf{Question 3 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let ajoute x l=
+  let rec aux x l flag=
+    match l with
+    | [] when not flag -> [x]
+    | [] -> []
+    | t::q when t=x -> t::(aux x q true)
+    | t::q -> t::(aux x q flag)
+  in aux x l false
+;;
+\end{minted}
+
+\textbf{Question 4 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let rec indice (b,r)=
+  let i = (b mod 3)*3 + (r mod 3) in
+  let j = (b/3)*3 + r/3 in
+  (i,j)
+;;
+\end{minted}
+
+\section{Codage de la formule initiale}
+\subsection{Formule logique décrivant la règle du jeu}
+
+    
+\textbf{Question 1 :} \newline
+
+(a) :\newline 
+
+Soit $(i,j) \in ⟦0,8⟧^2, \lor_{k=1}^9 x_{(i,j)}^k $ \newline 
+
+(b) :\newline
+
+On a : $\forall (i,j) \in ⟦0,8⟧^2, \exists k \in ⟦1,9⟧, x{^k_{(i,j)}}$\newline 
+
+(c) :\newline
+
+On a : $(K_1)\equiv \land_{i=0}^8(\land_{j=0}^8(\lor_{k=1}^9 x{_{(i,j)}^k}))$\newline 
+
+(d) :\newline 
+
+Il y a $8 \cdot 8 = 81$ clauses\newline 
+
+(e) :\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let case1 () =
+  let res = ref [] in
+  for i=0 to 8 do
+    for j=0 to 8 do
+      let temp = ref [] in
+      for k=1 to 9 do
+        temp:= (X(i,j,k)) :: !temp;
+      done;
+    res:= !temp :: !res;
+    done;
+  done;
+  !res
+;;
+\end{minted}
+
+\textbf{Question 2 :}\newline
+
+On a : $\forall i \in ⟦0,8⟧,\forall k \in ⟦1,9⟧, \exists j \in ⟦0,8⟧, x{^k_{(i,j)}}$ \newline
+On obtient alors la clause  $L_1\equiv \land_{i=0}^8(\land_{k=1}^9(\lor_{j=0}^8 x{_{(i,j)}^k}))$\newline
+
+\textbf{Question 3 :}\newline
+
+(a) :\newline
+
+On a $(C_1) \equiv \land_{j=0}^8(\land_{k=1}^9(\lor_{i=0}^8 x{_{(i,j)}^k}))$\newline
+Et $(B_1) \equiv \land_{b=0}^8(\land_{k=1}^9(\lor_{r=0}^8 x{_{\text{indice}(b,r)}^k}))$\newline
+
+\newpage
+(b) :\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let bloc1 ()=
+  let res = ref [] in
+  for b=0 to 8 do
+    for k=1 to 9 do
+      let temp = ref [] in
+      for r=0 to 8 do
+        let i,j = indice (b,r) in
+        temp:= X(i,j,k) :: !temp;
+      done;
+      res:= !temp :: !res
+    done;
+  done;
+  !res
+;;
+\end{minted}
+
+\textbf{Question 4 :}\newline
+
+(a) :\newline
+
+La ligne $i$ ne contient pas deux fois la valeur $k$ lorsque :
+$\forall j_1,j_2 \in ⟦0,8⟧, j_1< j_2 \Rightarrow (\lnot x{_{(i,j_1)}^k} \lor \lnot x{_{(i,j_2)}^k})$ \newline
+
+On obtient alors $\land_{b=0}^8 \land_{k=1}^9(\lnot x{_{(i,j_1)}^k} \lor \lnot x{_{(i,j_2)}^k})$\newline
+
+(b) :\newline
+
+On a $\forall i \in ⟦0,8⟧,\forall k \in ⟦1,9⟧,\forall j_1,j_2 \in ⟦0,8⟧, j_1 \not= j_2 \Rightarrow (\lnot x{_{(i,j_1)}^k} \lor \lnot x{_{(i,j_2)}^k})$\newline
+
+D'où $(L_2) \equiv \land_{i=0}^8\land_{k=1}^9\land_{j_1=0}^8\land_{j_2=0}^8(\lnot x{_{(i,j_1)}^k} \lor \lnot x{_{(i,j_2)}^k})$\newline
+
+(c) :\newline
+
+Il y a $9\cdot 9\cdot \frac{9\cdot 8}{2}=2916$ clauses.\newline
+
+(d) :\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let ligne2 ()=
+  let res = ref [] in
+  for i=0 to 8 do
+    for k=1 to 9 do
+      for j1=0 to 7 do
+        for j2=j1 to 8 do
+          res:= [NonX(i,j1,k);NonX(i,j2,k)] :: !res;
+        done;
+      done;
+    done;
+  done;
+  !res
+;;
+\end{minted}
+
+\newpage
+\textbf{Question 5 :}\newline
+
+On a \newline
+
+$(C_2) & \equiv & \land_{j=0}^8\land_{k=1}^9\land_{i_1=0}^7\land_{i_2=i_1+1}^8(\lnot x{_{(i_1,j)}^k} \lor \lnot x{_{(i_2,j)}^k}) $\newline
+$(K_2) & \equiv & \land_{i=0}^8\land_{j=0}^8\land_{k_1=1}^8\land_{k_2=k_1+1}^9(\lnot x{_{(i,j)}^k_1} \lor \lnot x{_{(i,j)}^k_2}) $\newline
+$(B_2) & \equiv & \land_{b=0}^8\land_{k=1}^9\land_{r_1=0}^7\land_{r_2=r_1+1}^8(\lnot x{_{\text{indice}(b,r_1)}^k} \lor \lnot x{_{\text{indice}(b,r_2)}^k})$ \newline
+
+\subsection{Formule logique décrivant la grille initiale}
+
+\textbf{Question 1 :} \newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let donnees t=
+  let res = ref [] in
+  for i=0 to 8 do
+    for j=0 to 8 do
+      match t.(i).(j) with
+      | 0 -> ()
+      | k ->  for q=1 to 9 do
+                if q=k then 
+                  res:= [X(i,j,q)] :: !res
+                else
+                  res:= [NonX(i,j,q)]::!res
+              done;
+    done;
+  done;
+;;
+\end{minted}
+
+\textbf{Question 2 :} \newline
+
+(a) :\newline
+
+On a $b=3\left \lfloor{\frac{i}{3}}\right \rfloor+\left \lfloor{\frac{j}{3}}\right \rfloor$ \newline
+
+(b) :\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let interdites_ij t i j=
+  let res = ref [] in
+  let b = 3*(i/3)+(j/3) in
+  for l=0 to 8 do
+    if t.(l).(j) <> 0 then
+      res := ajoute (NonX(i,j,t.(l).(j))) !res;
+    if t.(i).(l) <> 0 then
+      res := ajoute (NonX(i,j,t.(i).(l))) !res;
+    let i1,j1 = indice(b,l) in
+    if t.(i1).(j1) <> 0 then
+      res := ajoute (NonX(i,j,t.(i1).(j1))) !res;
+  done;
+!res ;;
+\end{minted}
+\newpage
+(c) :\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let interdites t =
+  let res = ref [] in
+  for i = 0 to 8 do 
+    for j = 0 to 8 do
+      if t.(i).(j)=0 then
+        res := (interdites_ij t i j) :: !res;
+    done; 
+  done;
+!res;;
+\end{minted}
+
+\textbf{Question 3 :}\newline
+
+Chaque case remplie est associé à 9 clauses. De plus, chaque case non remplie est associé à 8 clauses.\newline
+On notant $r$ le nomvre de cases remplis dans la grille initiale.\newline
+
+Alors on a $9r+8(81-r)$ clauses. Dans le pire des cas, la grille est remplis et $r=81$.\newline
+Dans le pire des cas, il y a $9^3=729$ clauses.\newline
+
+\section{Résolution}
+\subsection{Propagation unitaire}
+
+\textbf{Question 1 :}\newline
+
+Depuis une grille initiale, on obtient une unique grille finale. Alors il existe une unique solution. D'où, il y a une seule valuation satisfaisant $F_{\text{initiale}}$. \newline
+
+\textbf{Question 2 :}\newline
+
+Il y a $729$ clauses alors la table de vérité contient $2^{729}\approx 10^{219}$ lignes.\newline
+
+\textbf{Question 4 :}\newline
+
+On a $x{_{(0,0)}^1}\land(x{_{(2,2)}^4} \lor x{_{(3,6)}^6} \lor x{_{(7,7)}^7}) \land (\lnot x{_{(0,0)}^1} \lor \lnot x{_{(3,6)}^6})$ \newline
+Puis $(x{_{(2,2)}^4} \lor x{_{(3,6)}^6} \lor x{_{(7,7)}^7}) \land (\lnot x{_{(3,6)}^6})$\newline
+Finalement $(x{_{(2,2)}^4}  \lor x{_{(7,7)}^7})$\newline
+
+\textbf{Question 5 :}\newline
+
+(a) :\newline
+
+Les possibilités sont $1$,$2$,$4$ et $7$. Or il y a un $7$ présent dans le bloc $0$ à la ligne $2$ et dans le bloc $1$ à la ligne $1$ alors la seule possibilitée pour placer un $7$ dans le bloc $2$ est sur la ligne $0$ dans la case libre. \newline
+\newpage
+\textbf{Question 6 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let rec nouveau_lit_isole f=
+  match f with
+  | [] -> X(-1,-1,-1)
+  | [c]::q -> c
+  | _::q -> nouveau_lit_isole q
+;;
+\end{minted}
+
+\textbf{Question 7 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let non x=
+  match x with 
+  | X(i,j,k) -> NonX(i,j,k)
+  | NonX(i,j,k) -> X(i,j,k)
+;;
+
+let rec simplification l f=
+  match f with
+  | [] -> []
+  | t::q when appartient l t -> simplification l q
+  | t::q -> suppression (non l) t :: simplification l q
+;;
+\end{minted}
+
+\textbf{Question 8 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let rec propagation t f=
+  match nouveau_lit_isole f with
+  | X(-1,-1,-1) -> f
+  | X(i,j,k) -> t.(i).(j) <-k; 
+                propagation t (simplification (X(i,j,k)) f)
+  | l -> propagation t (simplification l f)
+;;
+\end{minted}
+
+\newpage
+\subsection{Règle du littéral infructueux}
+
+\textbf{Question 2 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let variables f = 
+  let res = ref [] in
+  let rec ajouter_clause c = 
+    match c with
+    | [] -> ()
+    | X(i,j,k)::q ->  res := ajoute (X(i,j,k)) !res; 
+                      ajouter_clause q
+    | NonX(i,j,k)::q -> res := ajoute (X(i,j,k)) !res; 
+                        ajouter_clause q in
+  let rec ajouter_formule f = 
+    match f with
+    | [] -> ()
+    | t::q -> ajouter_clause t; 
+                  ajouter_formule q
+  in ajouter_formule f;
+  !res
+;;
+\end{minted}
+
+\textbf{Question 3 :}\newline
+
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+let copie_matrice m=
+  let n,p=Array.length m,Array.length m.(0) in
+  let nvmat = Array.make_matrix n p 0 in
+  for i=0 to n do
+    for j=0 to p do
+      nvmat.(i).(j) <- m.(i).(j);
+    done;
+  done;
+  nvmat
+;;
+
+let deduction t x f = 
+  let t1 = copie_matrice t in 
+  match x with
+  | X(i,j,k) when propagation t1 ([NonX(i,j,k)] :: f) = [[]] -> 1
+  | _ -> let t2 = copie_matrice t 
+  in
+  if propagation t2 ([x] :: f) = [[]] then 
+    -1 
+  else 
+    0
+;;
+\end{minted}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
