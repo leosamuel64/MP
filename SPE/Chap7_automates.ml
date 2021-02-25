@@ -224,11 +224,11 @@ etats_utiles a_infini;;
 
 Supprimer les états inutiles (supprimer les transitions...) *)
 
-let emondage a=
+let emonde a=
   let liste_etats_utiles = etats_utiles a in
   let n = Array.length a.transitions in
 
-  let rec enleve_transition l=
+  let sans_transition_inutile l=
     List.filter (fun (_,q) -> List.mem q liste_etats_utiles) l
   in
 
@@ -236,7 +236,7 @@ let emondage a=
     if not (List.mem i liste_etats_utiles) then
       a.transitions.(i) <- []
     else
-      a.transitions.(i) <- enleve_transition a.transitions.(i)
+      a.transitions.(i) <- sans_transition_inutile a.transitions.(i)
   done;
 ;;
 
@@ -247,11 +247,103 @@ let ex_a_emonder = {
 	transitions = [|[('b',1); ('a',3); ('c',2)];[('c',2)];[];[('b',3);('c',4)];[];[ ('c',3); ('a',4)]|]
 };;
 
-emondage ex_a_emonder;;
+emonde ex_a_emonder;;
 
  ex_a_emonder;;
 
+(* Exercice 22 : Langage vide ?*)
+
+let langageReconnuEstVide a=
+  emonde a;
+  a.transitions.(a.initial)=[] && not (List.mem (a.initial) a.finals)
+;;
+
+let ex_vide = {
+	initial = 0 ;
+	finals = [4] ;
+	transitions = [|[('a',3)];[];[];[];[];[]|]
+};;
+
+langageReconnuEstVide ex_vide;;
 
 
+
+type afnd =
+  {
+  initiauxND : int list;
+  transitionsND : (int*char) list array;
+  finalsND : int list
+  }   
+;;
+  (* On ne peut pas avoir les mêmes nom de champ que les afd *)
+
+
+
+let rec fusion_stricte l1 l2=
+  (* l1 et l2 sont strictemement croissante *)
+  (* Sortie : la fusion, stictement croissante de ces listes *)
+  match l1,l2 with
+    | [], _-> l2
+    | _, []-> l1
+    | t1::q1, t2::q2 when t1=t2 -> t1::(fusion_stricte q1 q2)
+    | t1::q1, t2::q2 when t1<t2 -> t1::(fusion_stricte q1 l2)
+    | t1::q1, t2::q2 -> t2::(fusion_stricte l1 q2)
+;;
+
+let rec partition = function
+  | [] -> [],[]
+  | [t] -> [t],[]
+  | s::t::q -> let l1,l2 = partition q in s::l1,t::l2
+;;
+
+let rec tri_strict = function
+  | [] -> []
+  | [t] -> [t]
+  | l -> let l1,l2 = partition l in
+          fusion_stricte (tri_strict l1) (tri_strict l2)
+;;
+
+let union_sans_doublon l=
+  List.fold_left fusion_stricte [] l
+;;
+
+let deltaND q x a=
+
+  (* Transitions depuis q étiquetées par x : *)
+  let transition_depuis_q_avec_un_x = List.filter   (fun(_,lettre) -> lettre=x) 
+                                                    a.transitionsND.(q) in
+  tri_strict (List.map fst transition_depuis_q_avec_un_x)
+;;
+
+let delta_etoileND q m a=
+  let rec boucle i l=
+    (*  i : indice de la prochaine lettre à lire.
+        l : liste des états accessible en lisant *)
+    (* On calcul pour tout r ∈ l, la liste δ(r,m.(i)) *)
+    if i = String.length m then l
+    else(
+      let tous_les_delta_r_mi = List.map (fun r -> deltaND r m.[i] a) l in
+      let nv_l = union_sans_doublon tous_les_delta_r_mi in
+      boucle (i+1) nv_l
+    )
+  in boucle 0 q
+;;
+
+let delta_d l m a=
+  (*  l : liste d'états
+      m : mot
+      a : un afnd
+
+      Sortie : la réunion pour q dans l de delta_etoileND q m a
+  *)
+
+      let tous_les_delta_etoile_i_m = List.map (fun i -> delta_etoileND i m a) l in
+      union_sans_doublon tous_les_delta_etoile_i_m 
+      
+
+
+      (* Finir avec l'intersection pour jeudi
+      + exercice 24 *)
 
     
+

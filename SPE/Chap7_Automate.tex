@@ -361,6 +361,59 @@ pour obtenir un automate plus simple reconnaissant le même langage.\\
     \end{itemize}
 \end{itemize}
 
+PROGRAMMES
+
+\section{Automate non déterministe}
+\subsection{Principe}
+
+Pour un état $q$ et une lettre $x$, on autorise plusieurs transition depuis $q$ étiquetées par $x$.
+Donc pour un même mot m, il peut y avoir plusieurs chemin étiquetés par $m$. $m$ sera reconnu si au moins un de ces
+chemin arrive dans $\mathcal{F}$\\
+
+Ces automates sont beaucoup plus simple à concevoir et à créer que les AFD vus au début du cours. Le défaut est qu'il est
+plus compliqué à programmer et plus lent
+
+\subsection{Définition précise}
+
+\begin{definition}
+    Un automate non deterministe sur $\Sigma$ est un quadruplet formé de
+    \begin{itemize}
+        \item Un ensemble $\mathcal{Q}$ appelé ensemble des états
+        \item Une partie $\mathcal{I}$ de $\mathcal{Q}$ appelé ensemble des états initiaux
+        \item Une partie de $\mathcal{Q}$ appelé ensemble des états finals
+        \item Une fonction $\delta : \mathcal{Q}\times\Sigma \rightarrow \mathcal{P}(\mathcal{Q})$ appelée fonction de transition 
+    \end{itemize}
+\end{definition}
+
+\begin{remark}
+    Pour $q\in \mathcal{Q},x\in\Sigma, \delta(q,x)$ peut être $\emptyset$. C'est l'analogue d'un blocage 
+\end{remark}
+
+\begin{definition}
+    Soit $(\mathcal{Q},\mathcal{I},\mathcal{F},\delta)$ un AFND. On défini la fonction de transition étendue $\delta^*$ 
+    par récursivité ainsi :
+    \begin{itemize}
+        \item $\forall q \in \mathcal{Q}, \delta^*(q,\epsilon)=\{q\}$
+        \item $\forall q \in \mathcal{Q}, \forall m \in \Sigma^*, \forall x \in \Sigma, \delta^*(q,mx)=\cup_{r\in \delta^*(q,m)}\delta(r,x)$
+    \end{itemize}
+\end{definition}
+
+\begin{definition}
+    Soit A un AFDN et $(\mathcal{Q},\mathcal{I},\mathcal{F},\delta)$ ses composantes.\\
+    $\forall m \in \Sigma^*$, on dit que $m$ est reconnu par $\mathcal{A}$ lorsque
+    $\exists i \in \mathcal{I},\exists f \in \mathcal{F} \text{ tq } f\in \delta^*(i,m)$ ou
+    $\cup_{i\in \mathcal{I}} \delta^*(i,m)\cap \mathcal{F} \not= \emptyset$
+
+    On note $\mathcal{L}(\mathcal{A})$ l'ensemble des mots reconnus par $\mathcal{A}$
+\end{definition}
+
+Interpretation en terme de chemin : $\forall m \in \Sigma^*, m\in \mathcal{L}(\mathcal{A}) \Leftrightarrow$ il existe un chemin
+étiqueté par m partant d'un état initial arrivant à un état final
+
+\subsection{Programmation}
+
+
+
 
 \end{document}
 
