@@ -337,13 +337,39 @@ let delta_d l m a=
       Sortie : la réunion pour q dans l de delta_etoileND q m a
   *)
 
-      let tous_les_delta_etoile_i_m = List.map (fun i -> delta_etoileND i m a) l in
-      union_sans_doublon tous_les_delta_etoile_i_m 
+    let tous_les_delta_etoile_i_m = List.map (fun i -> delta_etoileND i m a) l in
+    union_sans_doublon tous_les_delta_etoile_i_m 
+;;
       
 
 
       (* Finir avec l'intersection pour jeudi
       + exercice 24 *)
+
+let intersection q m a= 
+  let rec aux l_delta l_f =
+    match l_delta,l_f with
+    | [],[] -> []
+    | [a],[] -> aux [] []
+    | [],[a] -> aux [] []
+    | t::q,[] -> aux q []
+    | [],t::q -> aux [] q
+    | t1::q1,t2::q2 when t1>t2 -> (aux (t1::q1) (q2))
+    | t1::q1,t2::q2 when t1<t2 -> (aux q1 (t2::q2))
+    | t1::q1, t2::q2 -> t1::aux q1 q2
+  in
+  let l_delta = delta_d q m a in
+  let l_f = a.finalsND in
+  
+  aux l_delta l_f
+;;
+
+
+
+  
+
+
+
 
     
 
