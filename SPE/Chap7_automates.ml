@@ -19,7 +19,7 @@ let list_of_string c=
   in aux 0
 ;;
   
-let alphabetLatin = list_of_string "abcdefghijklmnopqrstuvwxyz";;
+let alphabetLatin = list_of_string "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJQLMNOPQRSTUVWXYZ-_+=-&,?.;:!";;
 
 
 let a_infini =
@@ -77,9 +77,10 @@ reconnu "eygoihdbddfazaginfiddfinfiniigoihagoze" a_infini;;
 
 reconnu "eygoihdbddfazaginfiddfinfteriniigoihagoze" a_infini;;
 
-exception Blocage;;
-raise Blocage;;
 
+
+
+exception Blocage;;
 
 let delta2 i x a=
   (*  a : automate
@@ -169,7 +170,7 @@ let auto_complementaire_aux a=
 
 (* 2 - On le complete avant et on refait la même chose *)
 
-let auto_complementair_aux a alphabet=
+let auto_complementair_auxe a alphabet=
   auto_complementaire_aux (completed a alphabet);;
   
 
@@ -349,11 +350,7 @@ let delta_d l m a=
 let intersection q m a= 
   let rec aux l_delta l_f =
     match l_delta,l_f with
-    | [],[] -> []
-    | [a],[] -> aux [] []
-    | [],[a] -> aux [] []
-    | t::q,[] -> aux q []
-    | [],t::q -> aux [] q
+    | [],_ | _,[] -> []
     | t1::q1,t2::q2 when t1>t2 -> (aux (t1::q1) (q2))
     | t1::q1,t2::q2 when t1<t2 -> (aux q1 (t2::q2))
     | t1::q1, t2::q2 -> t1::aux q1 q2
@@ -364,12 +361,45 @@ let intersection q m a=
   aux l_delta l_f
 ;;
 
+let reconnuND q m a=
+  match intersection q m a with
+  | [] -> false
+  | _ -> true
+;;
+
+(* exemple contenant le facteur "ici" *)
+let tout_versND i alphabet=
+  List.map (fun x -> (i,x) ) alphabet
+;;
+
+let exemple_ici_ND = {initiauxND = [0];
+                      finalsND = [3];
+                      transitionsND = [|(1,'i')::(tout_versND 0 alphabetLatin);
+                                      [(2,'c')];
+                                      [(3,'i')];
+                                      tout_versND 3 alphabetLatin
+                                      |]
+                      };;
 
 
+(* Exercice 28 *)
+
+let construit_Automate m =
+  let n = String.length m in
+  let t = Array.make (n+1) [] in
+  t.(0) <- tout_versND 0 alphabetLatin;
+  t.(n) <- tout_versND n alphabetLatin;
+  for i=1 to n-1 do 
+    t.(i)<-[(i+1,m.[i])]
+  done;
+
+  {
+    initiauxND=[0];
+    finalsND = [n];
+    transitionsND = t
+  }
+;;
   
+construit_Automate "Endomorphisme auto-adjoint";;
 
-
-
-
-    
 

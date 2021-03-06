@@ -1,4 +1,5 @@
 \begin{document}
+	\maketitle
 
     \section{Exemples introductifs}
     Ecrivons un programme pour chercher le mot "info" dans un texte. L'algo naif à déjà été vu en MPSI.
@@ -192,16 +193,16 @@ Donc $\exists x \in L,\exists y \in M \cup N, m=x\cdot y$ alors $m \in L\cdot M 
 \begin{prop}
     \begin{itemize}
         \item $\forall \text{ langages } L, (L^*)^*=L^*$
-        \item $\forall L,M\in \mathcal{P}(\Sigma^*), L\incl M \Rightarrow L^*\incl M^*$. On dit que $*$ est croissante
+        \item $\forall L,M\in \mathcal{P}(\Sigma^*), L\subset M \Rightarrow L^*\subset M^*$. On dit que $*$ est croissante
     \end{itemize}
 \end{prop}
 
 \begin{dem}
-    Supposons $L\incl U$\\
+    Supposons $L\subset U$\\
     Soit $m\in L^*$, $\exists p \in \mathbb{N}, (l_1,\dots,l_p)\in L^p$ tq
     $m=l_1l_2\dots l_p$\\
 
-    Or $\forall i \in [[1,p]], l_i \in L \incl M$
+    Or $\forall i \in [[1,p]], l_i \in L \subset M$
     Donc $m \in M^*$
 \end{dem}
     
@@ -266,7 +267,66 @@ Un automate incomplet est alors
 
 \subsection{Programmation}
 
-INSERT CODE
+\begin{minted}[
+	frame=lines,
+	framesep=2mm,
+	baselinestretch=1.2,
+	bgcolor=white,
+	fontsize=\footnotesize,
+	linenos]
+	{ocaml}
+
+exception Blocage;;
+
+let delta2 i x a=
+  (*  a : automate
+      x : une lettre
+      i : un état de a
+  *)
+  let rec aux = function
+    | [] -> raise Blocage
+    | (lettre, etat)::_ when lettre = x -> etat 
+    | _::q -> aux q
+    in
+    aux (a.transitions.(i))
+;;
+
+let delta_etoile2 i m a =
+  (* Cette fois m est une chaine de caracteres.
+      Renvoie l'etat atteint apres lecture de toutes les lettres de m *)
+  
+  let rec boucle q k =
+      (* k : prochaine lettre de m à lire
+          q : etat actuel *)
+          if k = String.length m then
+              q
+          else
+              boucle (delta2 q m.[k] a ) (k+1)
+  in 
+  boucle i 0
+;;
+
+let reconnu2 m a =
+  try
+    List.mem (delta_etoile2 a.initial m a) a.finals
+  with
+    | Blocage -> false
+;;
+
+let completed a alphabet=
+  let n = Array.length a.transitions in
+  let p = n in
+  let nv_trans = Array.make (p+1) (tout_vers p alphabet) in
+  for i=0 to n-1 do
+    nv_trans.(i) <- (a.transitions.(i)@ nv_trans.(i));
+  done;
+  {
+    initial = a.initial;
+    finals = a.finals;
+    transitions=nv_trans
+  }
+;;
+\end{minted}
 
 \subsection{Complétion}
 
@@ -288,10 +348,11 @@ Alors $\mathcal{A}'$ est complet et il reconnait le même langage que $\mathcal{
 \end{thr}
 
 \begin{dem}
-    [Indirecte] Soit $m\in\mathcal{L}(\mathcal{A})$. Soit $c$ le chemin de $\mathcal{A}$ étiqueté par
+    \\
+		[$\Leftarrow$] Soit $m\in\mathcal{L}(\mathcal{A})$. Soit $c$ le chemin de $\mathcal{A}$ étiqueté par
     $m$. Ce chemin existe aussi dans $\mathcal{A}'$. Donc $m$ est reconnu par $\mathcal{A}'$
 
-    [Directe] Soit $m\in\mathcal{L}(\mathcal{A}')$Soit $c$ un chemin dans $\mathcal{A}'$ étiqueté par $m$, de
+    [$\Rightarrow$] Soit $m\in\mathcal{L}(\mathcal{A}')$Soit $c$ un chemin dans $\mathcal{A}'$ étiqueté par $m$, de
     $i$ à un certain $q_f$.\\
     
     $c$ ne passe pas par $p$ sans quoi il finirait à $p$ or $q_f\not= p$ car $p\not\in \mathcal{F}$\\
@@ -340,7 +401,7 @@ pour obtenir un automate plus simple reconnaissant le même langage.\\
     Soit $q\in \mathcal{Q}_é$. Donc $q$ est accessible et co-accessible\\
     Donc $\exists \gamma$ chemin dans $\mathcal{A}$ qui part de $i$ et arrive à un état de $\mathcal{F}$.\\
     Tous les états le long de $\gamma$ sont accessibles et co-accessibles donc sont encore dans $\mathcal{Q}_é$
-    Donc $\gamma \incl \mathcal{Q}_é$. Donc $q$ est accessible et co-accessible dans $\mathcal{A}_é$
+    Donc $\gamma \subset \mathcal{Q}_é$. Donc $q$ est accessible et co-accessible dans $\mathcal{A}_é$
     Donc $\mathcal{A}_é$ est émondé
 
     - Montrons que $\mathcal{L}(\mathcal{A})=\mathcal{L}(\mathcal{A}_é)$\\
@@ -361,7 +422,71 @@ pour obtenir un automate plus simple reconnaissant le même langage.\\
     \end{itemize}
 \end{itemize}
 
-PROGRAMMES
+\begin{minted}[
+    frame=lines,
+    framesep=2mm,
+    baselinestretch=1.2,
+    bgcolor=white,
+    fontsize=\footnotesize,
+    linenos]
+    {ocaml}
+
+let rec accessible trans i=
+	let n = Array.length trans in
+	let deja_vu = Array.make n false in
+	let rec visite_sommet s=
+		if deja_vu.(s) then []
+		else (
+			deja_vu.(s) <- true;
+			s::visite_voisins trans.(s)
+		)
+	and visite_voisins = function
+		| [] -> []
+		| (_,q)::suite -> (visite_sommet q) @ (visite_voisins suite)
+	in
+		visite_sommet i
+;;
+
+let etats_utiles a =
+	let trans = a.transitions in
+	let n = Array.length trans in
+	let deja_vu = Array.make n false in
+	let coaccessible = Array.make n false in
+		
+		let rec visite_sommet s chemin_parcouru=
+			if deja_vu.(s) then []
+			else (
+				deja_vu.(s) <- true;
+				if List.mem s (a.finals) then
+					List.iter (fun q -> coaccessible.(q)<- true) 
+										(s::chemin_parcouru);
+				s::visite_voisins (s::chemin_parcouru) trans.(s)
+			)
+		and visite_voisins chemin_parcouru = function
+			| [] -> []
+			| (_,q)::suite -> (visite_sommet q chemin_parcouru) @ (visite_voisins chemin_parcouru suite)
+		in
+			List.filter (fun q -> coaccessible.(q)) 
+									(visite_sommet a.initial [])
+;;
+	
+
+let emonde a=
+	let liste_etats_utiles = etats_utiles a in
+	let n = Array.length a.transitions in
+
+	let sans_transition_inutile l=
+		List.filter (fun (_,q) -> List.mem q liste_etats_utiles) l
+	in
+
+	for i=0 to n-1 do
+		if not (List.mem i liste_etats_utiles) then
+			a.transitions.(i) <- []
+		else
+			a.transitions.(i) <- sans_transition_inutile a.transitions.(i)
+	done;
+;;
+\end{minted}
 
 \section{Automate non déterministe}
 \subsection{Principe}
@@ -373,6 +498,9 @@ chemin arrive dans $\mathcal{F}$\\
 Ces automates sont beaucoup plus simple à concevoir et à créer que les AFD vus au début du cours. Le défaut est qu'il est
 plus compliqué à programmer et plus lent
 
+En effet à chaque lettre on doit calculer $\delta$ pour chaque élement d'une liste d'états au lieu d'un seul état.
+Il est possible de déterminiser automatiquement n'importe quel AFND
+
 \subsection{Définition précise}
 
 \begin{definition}
@@ -381,7 +509,7 @@ plus compliqué à programmer et plus lent
         \item Un ensemble $\mathcal{Q}$ appelé ensemble des états
         \item Une partie $\mathcal{I}$ de $\mathcal{Q}$ appelé ensemble des états initiaux
         \item Une partie de $\mathcal{Q}$ appelé ensemble des états finals
-        \item Une fonction $\delta : \mathcal{Q}\times\Sigma \rightarrow \mathcal{P}(\mathcal{Q})$ appelée fonction de transition 
+        \item Une fonction $\delta : \mathcal{Q}\times\Sigma \longrightarrow \mathcal{P}(\mathcal{Q})$ appelée fonction de transition 
     \end{itemize}
 \end{definition}
 
@@ -412,9 +540,67 @@ Interpretation en terme de chemin : $\forall m \in \Sigma^*, m\in \mathcal{L}(\m
 
 \subsection{Programmation}
 
+INSERT CODE TODO
 
+\subsection{Determinisation}
 
+Soit $(\mathcal{Q},\mathcal{I},\mathcal{F},\delta)$ un AFND noté $\mathcal{A}$.
+On définit l'AFD $\mathcal{A}_d$ ainsi :\\
 
+\begin{itemize}
+    \item On pose $\mathcal{Q}_d=\mathcal{P}(\mathcal{Q})$. Ainsi un état de $\mathcal{A}_d$ est un ensemble d'états de $\mathcal{A}$. On appellera $\mathcal{A}_d$ l'automate des parties de $\mathcal{A}$
+    \item On prend comme état initial $\mathcal{I}$
+    \item On pose $\delta_d :^{\mathcal{Q}_d \times\Sigma \longrightarrow \mathcal{Q}_d}_{(X,x)\rightarrow \bigcup_{q\in X}\delta(q,x)}$
+    \item On pose $\mathcal{F}_d = \{X\in\mathcal{P}(\mathcal{Q}) | X\cap F \not= \emptyset \}$
+\end{itemize}
+
+On pose alors $\mathcal{A}_d = (\mathcal{Q}_d,\mathcal{I},\mathcal{F}_d,\delta_d)$. C'est un AFD
+
+Principe :  $\forall X \in \mathcal{P}(\mathcal{Q}),\forall m \in \Sigma^*,\delta^*_d(X,m)$ est l'ensemble des états accessibles
+en lisant m depuis un élément de X.
+
+\begin{proposition}
+    $\forall X\in \mathcal{P}(\mathcal{Q}), \forall m \in \Sigma^*, \delta_d^*(X,m)= \bigcup_{r\in X}(r,m)$
+\end{proposition}
+
+\begin{dem}
+    $\forall n \in \mathbb{N},$ soit $\mathcal{P}(n):"\forall  m \in \Sigma^*, \forall X \in \mathcal{P}(\mathcal{Q}), \delta^*_d(X,m)=\bigcup_{r\in X}(r,m)"$\\
+    [INIT] : Soit $m \in \Sigma^0$ alors $m=\epsilon$. Alors $\delta^*_d(X,\epsilon)=X$ et $\bigcup_{r\in X}(r,\epsilon)=\bigcup_{r\in X} \{r\}=X$. Donc $\mathcal{P}(0)$
+    [HERE] : Soit $n\in \mathbb{N} tq \mathcal{P}(n)$. Soit $m \in \Sigma^{n+1}$ et $X \in \mathcal{P}(\mathcal{Q})$.
+    Soit $m' \in \Sigma^{n}$ et $x \in \Sigma tq m = m'x$
+    On a $\delta^*_d(X,m)=\delta^*_d(X,m'x) = \delta_d(\delta^*_d(X,m'),x)= \bigcup_{q\in \bigcup_{r\in X} \delta^*(r,m')}\delta(q,x)= \bigcup_{r\in X}\bigcup_{q\in \delta^*(r,m')} \delta(q,x)= \bigcup_{r\in X} \delta^*(r,m'x)$
+\end{dem}
+
+\begin{theorem}
+    $\mathcal{L}(\mathcal{A}_d)=\mathcal{L}(\mathcal{A})$
+\end{theorem}
+
+\begin{corollary}
+    Un langage est reconnaissable par un AFND ssi il est reconnaissable par un AFD
+\end{corollary}
+
+\begin{dem}
+    Soit $m\in \Sigma^*$. $m\in\mathcal{L}(\mathcal{A})\Leftrightarrow \exists q \in \mathcal{I} tq \delta^*(q,m)\cap\mathcal{F}\not=\emptyset \Leftrightarrow \bigcup_{q\in \mathcal{I}}\delta^*(q,m)\cap\mathcal{F}\not=\emptyset \Leftrightarrow \delta^*(q,m)\in\mathcal{F}  $
+\end{dem}
+
+\begin{example}
+    Soit l'automate exemple de la partie précedente qui reconnait "ici".\\
+    Calculons $\mathcal{A}_d$. On prend $\mathcal{Q}_d=\mathcal{P}([[0,3]])$
+    On va dessiner uniquement les états accessibles
+    \begin{itemize}
+        \item état initial : $\{0\}$
+        \item états finals : tous les ensembles qui contiennent 3 (il y en a 8)
+        \item On va faire un tableau et le remplir ligne après ligne
+    \end{itemize}
+
+METTRE LE TABLEAU TODO
+\end{example}
+
+\subsection{Programmation de la determination}
+On a déjà $\delta_d$. La seule difficulté, en Ocaml, un état est representé par un entier. Il faut attribuer un entier à chaque élément de $\mathcal{Q}_d$
+On va numéroter uniquement les états accessible par le même algo que l'exemple precédent 
+
+Exercice 31 pour jeudi
 \end{document}
 
 
