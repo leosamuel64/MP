@@ -330,16 +330,25 @@ let delta_etoileND q m a=
   in boucle 0 q
 ;;
 
-let delta_d l m a=
+let deltaEtoile_d l m a=
   (*  l : liste d'états
       m : mot
       a : un afnd
 
       Sortie : la réunion pour q dans l de delta_etoileND q m a
   *)
-
     let tous_les_delta_etoile_i_m = List.map (fun i -> delta_etoileND i m a) l in
     union_sans_doublon tous_les_delta_etoile_i_m 
+;;
+
+let delta_d l x a=
+  (*  l : liste d'états
+      m : mot
+      a : un afnd
+
+      Sortie : la réunion pour q dans l de delta_etoileND q m a
+  *)
+  union_sans_doublon (List.map (fun r -> deltaND r x a) l)
 ;;
       
 
@@ -355,11 +364,20 @@ let intersection q m a=
     | t1::q1,t2::q2 when t1<t2 -> (aux q1 (t2::q2))
     | t1::q1, t2::q2 -> t1::aux q1 q2
   in
-  let l_delta = delta_d q m a in
+  let l_delta = deltaEtoile_d q m a in
   let l_f = a.finalsND in
   
   aux l_delta l_f
 ;;
+
+let rec inter l_delta l_f =
+  match l_delta,l_f with
+  | [],_ | _,[] -> []
+  | t1::q1,t2::q2 when t1>t2 -> (inter (t1::q1) (q2))
+  | t1::q1,t2::q2 when t1<t2 -> (inter q1 (t2::q2))
+  | t1::q1, t2::q2 -> t1::inter q1 q2
+;;
+
 
 let reconnuND q m a=
   match intersection q m a with
@@ -382,24 +400,276 @@ let exemple_ici_ND = {initiauxND = [0];
                       };;
 
 
-(* Exercice 28 *)
 
-let construit_Automate m =
-  let n = String.length m in
-  let t = Array.make (n+1) [] in
-  t.(0) <- tout_versND 0 alphabetLatin;
-  t.(n) <- tout_versND n alphabetLatin;
-  for i=1 to n-1 do 
-    t.(i)<-[(i+1,m.[i])]
+let numerotation_det a alphabet =
+  (* a: AND 
+  sortie : une table de Hashage qui associe à chaque état accessible de \mathcal{A}_d un numéro et un tableau
+            qui associe à un numéro l'état correspondant *)
+
+  let dico = Hashtbl.create 42 in
+  let dico_inverse = Hashtbl.create 42 in
+  (* Le tableau sera créer à la fin : pour l'instant on ne connait pas sa longueur *)
+  let i = ref 0 in 
+  (* prochain numéro à utiliser *)
+
+  let rec visite_sommet q =
+    if not (Hashtbl.mem dico q) then
+      (
+      Hashtbl.add dico q !i;
+      Hashtbl.add dico_inverse !i q;
+      incr i;
+      visite_voisins (List.map (fun x -> delta_d q x a) alphabet)
+      )
+    
+  and visite_voisins = function
+  | [] -> ()
+  | q::autres_voisins ->  visite_sommet q; 
+                          visite_voisins autres_voisins;
+
+  in 
+  visite_sommet a.initiauxND;
+(* A ce stade, nous avons ;
+-le dico bien rempli
+- !i est le nombre d'états accessibles de \mathcal{A}_d *)
+
+(!i, dico, dico_inverse)
+;;
+
+numerotation_det exemple_ici_ND;;
+
+let rec intervalle a b=
+  if a>=b then []
+    else a::(intervalle (a+1) b)
+;;
+  
+
+let determinised a alphabet =
+  let (n, dico, dico_inv) = numerotation_det a alphabet in
+  
+  let etat_of_int i= Hashtbl.find dico_inv i
+  and int_of_etat q = Hashtbl.find dico q in
+
+  let transitions_de_ad = Array.make n [] in
+
+  for i=0 to n-1 do
+    transitions_de_ad.(i) <-
+                          List.map (fun x -> (x,int_of_etat (delta_d (etat_of_int i) x a))) 
+                          alphabet;
   done;
 
+  (* recherche des états finals de ad *)
+  let etats_finals = List.filter (fun i -> inter (a.finalsND) (etat_of_int i) <> [] )
+                                  (intervalle 0 n) in
+let ad =
   {
+    initial = int_of_etat a.initiauxND;
+    finals = etats_finals;
+    transitions = transitions_de_ad
+  }
+  in emonde ad;
+  ad
+;;
+
+(* Application : ecrire un programme qui prend un mot m et qui renvera un AFD reconnaissant Σ* m Σ* *)
+
+let construit_Automate m alphabet=
+  let n = String.length m in
+  let t = Array.make (n+1) [] in
+  t.(0) <- (1,m.[0])::(tout_versND 0 alphabetLatin);
+  t.(n) <- tout_versND n alphabetLatin;
+
+  for i=1 to n-1 do 
+    t.(i) <- (i+1,m.[i])::t.(i)
+  done;
+
+  let a_nd = {
     initiauxND=[0];
     finalsND = [n];
     transitionsND = t
+  } in
+
+  determinised a_nd alphabet
+;;
+
+let a= construit_Automate "hello_world" alphabetLatin;;
+
+reconnu "lenjbkhvhjvdnvdshjbkqjhbdzjchvjqsvdjhvjdsv hello_world dbfhbdhfbhdfb" a;;
+reconnu "lenjbkhvhjvdnvdshjbkqjhbdzjchvjqsvdjhvjdsv hell_world dbfhbdhfbhdfb" a;;
+
+(* Exercice 33 *)
+
+(* 1- c'est delta_d *) 
+
+(* 2- *)
+
+  let indice_fin_motif m a=
+    let rec boucle i l=
+      (*  i : indice de la prochaine lettre à lire.
+          l : liste des états accessible en lisant *)
+      (* On calcul pour tout r ∈ l, la liste δ(r,m.(i)) *)
+      if inter (a.finalsND) l <> [] then
+        (i,l)
+      else if i =String.length  m then (String.length m,inter a.finalsND l)
+      else
+      (
+        let tous_les_deltas_r_mi = List.map (fun r->deltaND r m.[i] a) l
+        in
+        let nv_l = union_sans_doublon tous_les_deltas_r_mi in
+        boucle (i+1) nv_l
+      )
+      
+    in boucle 0 a.initiauxND
+  ;;
+
+let on_peut_rester a alphabet=
+  let nv_trans = Array.copy a.transitionsND in
+  let rec aux l=
+    match l with
+    | [] ->()
+    | t::q -> nv_trans.(t) <- (tout_versND t alphabet) @ nv_trans.(t);aux q
+  in aux a.initiauxND;
+  {
+    initiauxND=a.initiauxND;
+    finalsND = a.finalsND;
+    transitionsND = nv_trans
   }
 ;;
-  
-construit_Automate "Endomorphisme auto-adjoint";;
+
+let retourned a nv_initiaux=
+  let n = Array.length a.transitionsND in
+  let nv_trans = Array.make n [] in
+
+  let rec ajoute l i=
+    match l with 
+    | [] -> ()
+    | (n,c)::q -> nv_trans.(n) <- (i,c)::nv_trans.(n);
+                  ajoute q i
+  in
+
+  for i=0 to n-1 do
+    ajoute a.transitionsND.(i) i;
+  done;
+
+  {
+    initiauxND=nv_initiaux;
+    finalsND = a.initiauxND;
+    transitionsND = nv_trans
+  }
+;;
+    
+let miroir mot=
+  let rec aux i=
+    if i=String.length mot then
+      ""
+    else
+      (aux (i+1))^(String.make 1 mot.[i])
+    in aux 0
+;;
+
+
+let juste_ici_ND = {initiauxND = [0];
+                      finalsND = [3];
+                      transitionsND = [|
+                                        [(1,'i')];
+                                        [(2,'c')];
+                                        [(3,'i')]
+                                      |]
+                      };;
+
+
+
+let place_motif m a alphabet=
+  let j,l = indice_fin_motif m (on_peut_rester a alphabet) in
+  let ret_a = retourned a l in
+  let i,_=indice_fin_motif (miroir (String.sub m 0 j)) ret_a in
+  (i,j)
+;;
+
+place_motif "bhkicidq;ghv" juste_ici_ND alphabetLatin;;
+
+;;
+
+
+
+
+(* PARTIE 2 *)
+
+type regexp =
+  | Lettre of char
+  | Point of (regexp * regexp)
+  | Plus of (regexp * regexp)
+  | Etoile of regexp
+;;
+
+
+let rec contient_eps regexp =
+  match regexp with
+  | Lettre(_) -> false
+  | Point(e,f) -> contient_eps e && contient_eps f
+  | Plus(e,f) -> contient_eps e || contient_eps f
+  | Etoile(_) -> true
+;;
+
+let exemple =
+  Point(Etoile (Lettre 'a'), Point(Plus((Lettre 'b'),(Lettre 'c')),Etoile(Lettre 'b')));;
+
+
+(* langages locaux *)
+
+(* ecrivons des fonctions pour recup les paramètres d'un langage local *)
+
+let rec trouve_P = function
+(*  entrée : Une regexp e 
+    sortie : Liste des premieres lettres de e *)
+  | Etoile(f) -> trouve_P f
+  | Plus(f,g) -> fusion_stricte (trouve_P f) (trouve_P g)
+  | Lettre a -> [a]
+  | Point(f,g) when contient_eps f -> fusion_stricte (trouve_P f) (trouve_P g)
+  | Point(f,_) -> trouve_P f
+;;
+
+trouve_P exemple;;
+
+let rec trouve_S = function
+(*  entrée : Une regexp e 
+    sortie : Liste des premieres lettres de e *)
+  | Etoile(f) -> trouve_S f
+  | Plus(f,g) -> fusion_stricte (trouve_S f) (trouve_S g)
+  | Lettre a -> [a]
+  | Point(f,g) when contient_eps f -> fusion_stricte (trouve_S f) (trouve_S g)
+  | Point(_,g) -> trouve_S g
+;;
+
+let rec produit l1 l2 =
+  let rec e_avec_l e l=
+    match l with
+    | t::q -> (e,t)::e_avec_l e q
+    | [] -> []
+  in
+  match l1 with
+  | t::q -> fusion_stricte (e_avec_l t l2) (produit q l2)
+  | [] -> []
+;;
+
+let rec trouve_F = function
+  (* Sortie : liste de couple de char *)
+  | Lettre _ -> []
+  | Etoile x -> fusion_stricte  (produit (trouve_P x) (trouve_S x)) 
+                                (trouve_F x)
+  | Plus(f,g) -> fusion_stricte (trouve_F f) 
+                                (trouve_F g)
+  | Point(f,g) -> fusion_stricte  (fusion_stricte   (trouve_F f) 
+                                                    (trouve_F g)) 
+                                  ((produit (trouve_P f) (trouve_S g)))
+;;
+
+trouve_F exemple;;
+
+
+(* programmation de l'automate associé à un langage local *)
+
+let rec lettre_dans_e = function
+(* Finir la fx avec chaque lettre associé a un nombre int. *)
+
 
 

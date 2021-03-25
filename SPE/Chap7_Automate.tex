@@ -600,7 +600,126 @@ METTRE LE TABLEAU TODO
 On a déjà $\delta_d$. La seule difficulté, en Ocaml, un état est representé par un entier. Il faut attribuer un entier à chaque élément de $\mathcal{Q}_d$
 On va numéroter uniquement les états accessible par le même algo que l'exemple precédent 
 
-Exercice 31 pour jeudi
+Etape 1 : numéroter les états accessibles dans $\mathcal{A}_d$. Les états seront représentées par des int list strictements croissantes.
+On va de plus numéroter ces états grace à des dictionnaire (int list -> int). On enregistrera aussi un tableau pour associer à chaque numéro l'état correspondant.
+
+\section{Expressions régulières}
+
+\begin{definition}
+    On définit les expressions regulieres sur $\Sigma$ :
+    \begin{itemize}
+        \item $\emptyset \epsilon$ et les lettres sont des regex
+        \item Si $e$ est une regex, alors $(e^x)$ aussi
+        \item Si $e$, $f$ sont deux regex, alors $(e+f)$ et $(e\cdot f)$ aussi
+    \end{itemize}
+\end{definition}
+
+On définit le type Ocaml par :
+
+TODO mettre le type ocaml
+
+\begin{definition}
+    Notons $\mathcal{R}(\Sigma)$ l'ensemble des regex sur $\Sigma$
+    On définit la fonction $\mathcal{L}:\mathcal{R}(\Sigma)\rightarrow\mathcal{P}(\Sigma^*)$ par recursivité :
+    \begin{itemize}
+        \item $\mathcal{L}(\emptyset)=\emptyset$
+        \item $\mathcal{L}(\epsilon)=\{\epsilon\}$
+        \item $\forall x \in \Sigma, \mathcal{L}(x)=\{x\}$
+        \item $\forall e \in \mathcal{R}(\Sigma),\mathcal{L}(e*)=\mathcal{L}(e)*$
+        \item $\forall (e,f)\in \mathcal{R}(\Sigma), \mathcal{L}(e+f)=\mathcal{L}(e)\cup \mathcal{L}(f)$
+        \item $\forall (e,f)\in \mathcal{R}(\Sigma), \mathcal{L}(e\cdot f)=\mathcal{L}(e)\cdot \mathcal{L}(f)$
+    \end{itemize}
+\end{definition}
+
+\begin{proposition}
+    Cette propriété permet de se passer des constructeurs $\emptyset$ et $\epsilon$\\
+    Soit $e$ une regexp ni $\emptyset$ ni $\epsilon$, alors il existe $e'$ une regexp ne contenant ni $\emptyset$ ni $\epsilon$ tq $\mathcal{L}(e) = \mathcal{L}(e')$
+\end{proposition}
+
+\begin{proof}
+    Par induction structurelle : \\
+
+    \begin{itemize}
+        \item Soit $e$ un lettre : $e$ ne contient ni $\emptyset$ ni $\epsilon$ alors $e'=e$ convient
+        \item Soit $f\in \mathcal{R}(\Sigma)$ et $e=f$. Supposons la prop vraie pour f. Soit $f'$ une regexp sans $\emptyset$ ni $\epsilon$. Alors $\mathcal{L}(e) = \mathcal{L}(f^*)=\mathcal{L}(f)^*=\mathcal{L}(f)^* ou (\mathcal{L}(f')\cup\{\epsilon\})=\mathcal{L}(f')^*$.\\ Alors on prend $e'=f'*$
+    TODO ajouter la fin de la demo
+    \end{itemize}
+\end{proof}
+
+En consequence de cette proposition, on considerera dans la suite des regexp construits sans $\epsilon$ ni $\emptyset$.\\
+
+\section{Langages Locaux}
+\subsection{Programmation}
+
+TODO AJOUTER CODE
+
+\subsection{Automate associé à un langage}
+
+\begin{remark}
+    Si $\mathcal{L}(e)$ n'est pas local, on peut quand même calculer les ensembles. Dans ce cas on aura $\mathcal{L}(e) \not= \mathcal{L}(\mathcal{P},\mathcal{S},\mathcal{F},\alpha)$
+\end{remark}
+
+Soit $\mathcal{L}$ un langage local et $(\mathcal{P},\mathcal{S},\mathcal{F},\alpha)$ ses paramètres
+
+On créer un état par lettre et un état qui servira d'état initial.\\
+
+$\forall x \in \Sigma$, notons $q_x$ l'état associé à $x$ et notons $q_0$ l'état supplémentaire.\\
+Soit $\mathcal{Q}=\{q_0\}\cup\{q_x;x\in \Sigma\}$\\
+
+- Etat initial : $q_0$\\
+
+- Transitions : 
+\begin{itemize}
+    \item $\forall a,b \in \mathcal{F}$, on ajoute la trans $q_a \rightarrow b \rightarrow q_b$
+    \item $\forall x \in \mathcal{P}$, on ajoute la trans $q_0 \rightarrow x \rightarrow q_x$
+\end{itemize}
+
+- Etats finals :
+\begin{itemize}
+    \item On prend $q_0$ ssi $\alpha$
+    \item Et on prend les $\{q_s ; s\in \mathcal{S} \}$
+\end{itemize}
+
+\begin{exemple}
+    Soit $e=a^*(b+c)^*d$
+    On a    $\mathcal{P} = \{a,b,c,d\}$
+            $\mathcal{S} = \{d\}$
+            $\alpha=\bot$
+            $\mathcal{F} = \{aa,ab,ac,bb,cc,bc,cb,bd,cd,ad\}$
+
+    On consate que cet automate reconnait $\mathcal{L}(e)$. De plus, il est local
+\end{exemple}
+
+\begin{theorem}
+    Si $\mathcal{L}$ est local, $\mathcal{A}$ reconnait $\mathcal{L}$
+\end{theorem}
+
+\begin{proof}
+    Soit $m \in \mathcal{L}$\\
+    \begin{itemize}
+        \item Si $m=\epsilon$ alors $\alpha$ donc $q_0$ est final. Or $\delta^*(q_0,epsilon)=q_0$ donc $\epsilon \in \mathcal{L}$
+        \item Si $m\not= \epsilon$, on a $m=m_0...m_{n-1}$. \begin{itemize}
+            \item $m_0 \in \mathcal{P}$ donc on a la transition $q_0 \rightarrow m_0 \rightarrow q_{m_0}$
+            \item $\forall i \in [[0,n-1[[, m_im_{i+1} \in \mathcal{F}$ \footnote{Ce n'est pas l'ensemble des états finaux}
+        \end{itemize}
+    \end{itemize}
+    Ainsi, $\mathcal{A}$ contient le chemin.\\
+    Donc $m\in \mathcal{L}(\mathcal{A})$\\
+
+    Soit $m\in\mathcal{L}(\mathcal{A})$
+    \begin{itemize}
+        \item Si $m=\epsilon$, $q_0$ est final, donc $\alpha = \top$ donc $\epsilon\in\mathcal{L}$
+        \item Sinon : $m=m_0...m_{n-1}$ \begin{itemize}
+            \item Pas de blocage en lisant $m_0$ donc il existe une transtion $q_0 \rightarrow m_0 \rightarrow q_{m_0}$ Donc $m_0\in \mathcal{P}$
+            \item $\forall i \in [[0,n-1[[$, apres lecture de $m$ on est dans $q_{m_i}$ et il n'y a pas de blocage ensuite. Alors la transition  $q_{m_1} \rightarrow m_i \rightarrow q_{m_{i+1}}$
+        \end{itemize}
+        \item apres lecture de $m$ on est dans $q_{m_{n-1}}$ Or cet état est final car $m$ est reconnu
+    \end{itemize}
+    Ainsi $m\in\mathcal{L}(\mathcal{P},\mathcal{S},\mathcal{F},\alpha)$
+\end{proof}
+
+
+
 \end{document}
 
 
