@@ -668,8 +668,47 @@ trouve_F exemple;;
 
 (* programmation de l'automate associé à un langage local *)
 
-let rec lettre_dans_e = function
+let rec lettre_dans_e e =
 (* Finir la fx avec chaque lettre associé a un nombre int. *)
+  let rec aux e=
+    match e with
+    | Lettre a -> [a]
+    | Etoile x -> aux x
+    | Plus (f,g) -> fusion_stricte (aux f) (aux g)
+    | Point (f,g) -> fusion_stricte (aux f) (aux g)
+  in
+  let rec assoc l i=
+    match l with
+    | [] -> []
+    | t::q -> (i,t)::assoc q (i+1)
+  in
+assoc (aux e) 0
+;;
+
+lettre_dans_e exemple;;
+
+
+
+let carre x=
+  x*x
+;;
+
+let cube x y=
+  x*y*x
+;;
+
+let rond f g x =
+  f (g x)
+;;
+
+
+let f = rond rond rond;;
+(* f a b i1 i2 i3 = b (a i1 i2) i3 *)
+
+f carre max (-5) 2;;
+
+
+
 
 
 
